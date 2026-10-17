@@ -1,0 +1,1768 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>瑞龍大哥的傳奇人生模擬器 | 台灣 Mr. Beast 嘉義總部</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-pink: #ff2a85;
+            --neon-cyan: #00f0ff;
+            --neon-yellow: #ffe600;
+            --line-bg: #8cabd9;
+        }
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #0f0e17;
+            background-image: 
+                radial-gradient(at 10% 10%, rgba(255, 42, 133, 0.15) 0px, transparent 50%),
+                radial-gradient(at 90% 90%, rgba(0, 240, 255, 0.15) 0px, transparent 50%);
+            color: #fffffe;
+            overflow-x: hidden;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 42, 133, 0.6);
+        }
+        .retro-border {
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+        }
+        .neon-glow-pink {
+            box-shadow: 0 0 15px rgba(255, 42, 133, 0.5);
+        }
+        .neon-glow-cyan {
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+        }
+        .line-chat-bg {
+            background-color: #7494c0;
+            background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 0);
+            background-size: 16px 16px;
+        }
+        @keyframes popIn {
+            0% { opacity: 0; transform: translateY(10px) scale(0.98); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .animate-pop {
+            animation: popIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-4px); }
+            40%, 80% { transform: translateX(4px); }
+        }
+        .animate-shake {
+            animation: shake 0.4s ease-in-out;
+        }
+        .action-btn {
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .action-btn:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.01);
+        }
+        .action-btn:active:not(:disabled) {
+            transform: translateY(1px) scale(0.98);
+        }
+        @keyframes toastSlideIn {
+            0% { opacity: 0; transform: translateX(120%) scale(0.9); }
+            70% { opacity: 1; transform: translateX(-6px) scale(1.02); }
+            100% { opacity: 1; transform: translateX(0) scale(1); }
+        }
+        @keyframes toastFadeOut {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-12px) scale(0.95); }
+        }
+        .line-toast-enter {
+            animation: toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .line-toast-exit {
+            animation: toastFadeOut 0.25s ease-in forwards;
+        }
+        .line-ring-glow {
+            box-shadow: 0 0 25px rgba(6, 199, 85, 0.65);
+            border-color: #06C755 !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-2 sm:p-4 md:p-6 select-none">
+
+    <!-- Floating LINE Push Notification Container -->
+    <div id="line-toast-container" class="fixed top-3 right-3 sm:top-5 sm:right-5 z-50 flex flex-col gap-2.5 max-w-xs sm:max-w-sm w-full pointer-events-none"></div>
+
+    <!-- Top Header & Status Bar -->
+    <header class="w-full max-w-7xl mx-auto mb-3 bg-slate-900/90 backdrop-blur-md retro-border rounded-2xl p-3 sm:p-4">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 border-b border-slate-800 pb-3">
+            <!-- Profile & Title -->
+            <div class="flex items-center gap-3">
+                <div class="relative">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-tr from-pink-500 via-purple-500 to-cyan-400 p-0.5 neon-glow-pink">
+                        <div class="w-full h-full bg-slate-950 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl">
+                            🕶️
+                        </div>
+                    </div>
+                    <span class="absolute -bottom-1 -right-1 bg-emerald-500 text-[10px] font-bold px-1.5 py-0.5 rounded-full text-slate-950">LV.99</span>
+                </div>
+                <div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <h1 class="text-lg sm:text-xl font-black tracking-wide bg-gradient-to-r from-white via-pink-200 to-cyan-200 bg-clip-text text-transparent">
+                            瑞龍大哥的傳奇日常
+                        </h1>
+                        <span class="text-xs px-2 py-0.5 rounded-full bg-pink-500/20 border border-pink-500/40 text-pink-300 font-medium">
+                            <i class="fa-solid fa-location-dot mr-1"></i>嘉義總部
+                        </span>
+                        <span id="outfit-badge" class="text-xs px-2 py-0.5 rounded-full bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 font-medium">
+                            👕 穿搭：美式復古火焰襯衫＋垮褲
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-0.5">
+                        台灣 Mr. Beast · 跨國印章/娛樂/音樂巨擘 · 復古玩具收藏家
+                    </p>
+                </div>
+            </div>
+
+            <!-- Date, Time & Empire Metrics -->
+            <div class="flex flex-wrap items-center gap-2 sm:gap-4 w-full lg:w-auto justify-between lg:justify-end bg-slate-950/80 p-2.5 rounded-xl border border-slate-800/80">
+                <div class="flex items-center gap-2 pr-3 border-r border-slate-800">
+                    <i class="fa-regular fa-clock text-cyan-400 text-lg"></i>
+                    <div>
+                        <div id="day-display" class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">第 1 天 · 週一</div>
+                        <div id="time-display" class="text-base sm:text-lg font-black text-white font-mono">08:00</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 sm:gap-5 text-xs">
+                    <div>
+                        <div class="text-slate-400">YT 訂閱數</div>
+                        <div id="subs-display" class="font-black text-red-400 text-sm">1.08 億</div>
+                    </div>
+                    <div>
+                        <div class="text-slate-400">集團年營收</div>
+                        <div id="rev-display" class="font-black text-amber-400 text-sm">4,280 億</div>
+                    </div>
+                    <div>
+                        <div class="text-slate-400">美式玩具館藏</div>
+                        <div id="toys-display" class="font-black text-purple-400 text-sm">8,842 件</div>
+                    </div>
+                    <button onclick="openCollectionModal()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold transition flex items-center gap-1">
+                        <i class="fa-solid fa-trophy text-amber-400"></i> 圖鑑 <span id="header-progress" class="text-[10px] text-amber-300 font-mono">(0/31)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Core Vitals (Mood, Anger, Hunger) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-3">
+            <!-- Mood -->
+            <div class="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800/80 flex flex-col justify-between">
+                <div class="flex justify-between items-center text-xs mb-1.5">
+                    <span class="font-bold text-pink-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-heart-pulse"></i> 心情值 (Mood)
+                    </span>
+                    <span id="mood-text" class="font-mono font-bold text-white">60 / 100</span>
+                </div>
+                <div class="w-full h-3 bg-slate-800 rounded-full overflow-hidden p-0.5 relative">
+                    <div id="mood-bar" class="h-full bg-gradient-to-r from-pink-600 to-rose-400 rounded-full transition-all duration-300" style="width: 60%"></div>
+                    <div class="absolute top-0 bottom-0 left-[15%] w-0.5 bg-red-500/70"></div>
+                    <div class="absolute top-0 bottom-0 left-[85%] w-0.5 bg-red-500/70"></div>
+                </div>
+                <div id="mood-warning" class="text-[11px] text-slate-400 mt-1 truncate">狀態：帥氣又迷人，隨時準備享受人生</div>
+            </div>
+
+            <!-- Anger -->
+            <div class="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800/80 flex flex-col justify-between">
+                <div class="flex justify-between items-center text-xs mb-1.5">
+                    <span class="font-bold text-orange-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-fire-flame-curved"></i> 怒氣值 (Anger)
+                    </span>
+                    <span id="anger-text" class="font-mono font-bold text-white">35 / 100</span>
+                </div>
+                <div class="w-full h-3 bg-slate-800 rounded-full overflow-hidden p-0.5 relative">
+                    <div id="anger-bar" class="h-full bg-gradient-to-r from-amber-500 to-red-600 rounded-full transition-all duration-300" style="width: 35%"></div>
+                    <div class="absolute top-0 bottom-0 left-[15%] w-0.5 bg-red-500/70"></div>
+                    <div class="absolute top-0 bottom-0 left-[85%] w-0.5 bg-red-500/70"></div>
+                </div>
+                <div id="anger-warning" class="text-[11px] text-slate-400 mt-1 truncate">狀態：看到主人跟托比的訊息就有點煩</div>
+            </div>
+
+            <!-- Hunger -->
+            <div class="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800/80 flex flex-col justify-between">
+                <div class="flex justify-between items-center text-xs mb-1.5">
+                    <span class="font-bold text-emerald-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-bowl-food"></i> 飢餓值 (Hunger)
+                    </span>
+                    <span id="hunger-text" class="font-mono font-bold text-white">40 / 100</span>
+                </div>
+                <div class="w-full h-3 bg-slate-800 rounded-full overflow-hidden p-0.5 relative">
+                    <div id="hunger-bar" class="h-full bg-gradient-to-r from-emerald-500 to-teal-300 rounded-full transition-all duration-300" style="width: 40%"></div>
+                    <div class="absolute top-0 bottom-0 left-[15%] w-0.5 bg-red-500/70"></div>
+                    <div class="absolute top-0 bottom-0 left-[85%] w-0.5 bg-red-500/70"></div>
+                </div>
+                <div id="hunger-warning" class="text-[11px] text-slate-400 mt-1 truncate">狀態：肚子微餓，想吃嘉義火雞肉飯</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dual Window Content -->
+    <main class="w-full max-w-7xl mx-auto flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-0">
+        
+        <!-- Left Column: Big Brother's Action Log & Controls (7 Cols) -->
+        <section class="lg:col-span-7 flex flex-col bg-slate-900/90 backdrop-blur-md retro-border rounded-2xl overflow-hidden">
+            <!-- Section Header -->
+            <div class="px-4 py-3 bg-slate-950 border-b border-slate-800 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-pink-500 animate-pulse"></span>
+                    <h2 class="font-black text-sm sm:text-base tracking-wide text-white">
+                        📅 瑞龍大哥的行動日誌
+                    </h2>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="jelly-status" class="text-xs bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full font-medium">
+                        🐶 果凍正在翻肚肚
+                    </span>
+                </div>
+            </div>
+
+            <!-- Narrative Log Area -->
+            <div id="action-log" class="flex-1 p-4 space-y-3.5 overflow-y-auto max-h-[380px] sm:max-h-[430px]">
+                <!-- Dynamic logs injected here -->
+            </div>
+
+            <!-- Action Buttons Panel -->
+            <div class="p-3 sm:p-4 bg-slate-950/95 border-t border-slate-800">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs font-bold text-cyan-400 uppercase tracking-wider">
+                        <i class="fa-solid fa-bolt mr-1"></i>選擇大哥接下來的行程
+                    </span>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <button onclick="takeAction('empire')" class="action-btn flex flex-col items-start p-2.5 rounded-xl bg-gradient-to-br from-rose-950/90 to-slate-900 border border-rose-500/40 hover:border-rose-400 text-left group">
+                        <div class="flex items-center justify-between w-full mb-1">
+                            <span class="text-lg">🎬</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300">心情±5 飢餓±5</span>
+                        </div>
+                        <div class="font-bold text-xs sm:text-sm text-white group-hover:text-rose-300">拍片 / 刻傳奇印章</div>
+                        <div class="text-[10px] text-slate-400 line-clamp-1">台灣Mr.Beast撒幣企劃</div>
+                    </button>
+
+                    <button onclick="takeAction('romance')" class="action-btn flex flex-col items-start p-2.5 rounded-xl bg-gradient-to-br from-fuchsia-950/90 to-slate-900 border border-fuchsia-500/40 hover:border-fuchsia-400 text-left group">
+                        <div class="flex items-center justify-between w-full mb-1">
+                            <span class="text-lg">💋</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-fuchsia-500/20 text-fuchsia-300">心情±5 飢餓±5</span>
+                        </div>
+                        <div class="font-bold text-xs sm:text-sm text-white group-hover:text-fuchsia-300">約酷哥酷姊激戰</div>
+                        <div class="text-[10px] text-slate-400 line-clamp-1">混亂私生活・顏值巔峰</div>
+                    </button>
+
+                    <button onclick="takeAction('toys')" class="action-btn flex flex-col items-start p-2.5 rounded-xl bg-gradient-to-br from-purple-950/90 to-slate-900 border border-purple-500/40 hover:border-purple-400 text-left group">
+                        <div class="flex items-center justify-between w-full mb-1">
+                            <span class="text-lg">🤖</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">怒氣±5 心情±5</span>
+                        </div>
+                        <div class="font-bold text-xs sm:text-sm text-white group-hover:text-purple-300">把玩美式復古玩具</div>
+                        <div class="text-[10px] text-slate-400 line-clamp-1">拍賣會掃貨與潮流穿搭</div>
+                    </button>
+
+                    <button onclick="takeAction('family')" class="action-btn flex flex-col items-start p-2.5 rounded-xl bg-gradient-to-br from-amber-950/90 to-slate-900 border border-amber-500/40 hover:border-amber-400 text-left group">
+                        <div class="flex items-center justify-between w-full mb-1">
+                            <span class="text-lg">🐶</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">怒氣±5 心情±5</span>
+                        </div>
+                        <div class="font-bold text-xs sm:text-sm text-white group-hover:text-amber-300">陪果凍＆爸媽姐姐</div>
+                        <div class="text-[10px] text-slate-400 line-clamp-1">溫馨嘉義家庭時光</div>
+                    </button>
+
+                    <button onclick="takeAction('eat')" class="action-btn flex flex-col items-start p-2.5 rounded-xl bg-gradient-to-br from-emerald-950/90 to-slate-900 border border-emerald-500/40 hover:border-emerald-400 text-left group">
+                        <div class="flex items-center justify-between w-full mb-1">
+                            <span class="text-lg">🍚</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">飢餓±5 心情±5</span>
+                        </div>
+                        <div class="font-bold text-xs sm:text-sm text-white group-hover:text-emerald-300">大啖嘉義頂級美食</div>
+                        <div class="text-[10px] text-slate-400 line-clamp-1">包場雞肉飯與米其林</div>
+                    </button>
+
+                    <button onclick="takeAction('sing')" class="action-btn flex flex-col items-start p-2.5 rounded-xl bg-gradient-to-br from-cyan-950/90 to-slate-900 border border-cyan-500/40 hover:border-cyan-400 text-left group">
+                        <div class="flex items-center justify-between w-full mb-1">
+                            <span class="text-lg">🎤</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300">怒氣±5 飢餓±5</span>
+                        </div>
+                        <div class="font-bold text-xs sm:text-sm text-white group-hover:text-cyan-300">錄製洗腦神曲練歌</div>
+                        <div class="text-[10px] text-slate-400 line-clamp-1">天籟嗓音轟動全球榜單</div>
+                    </button>
+
+                    <button onclick="takeAction('grind')" class="action-btn flex flex-col items-start p-2.5 rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-600/50 hover:border-slate-400 text-left group">
+                        <div class="flex items-center justify-between w-full mb-1">
+                            <span class="text-lg">📉</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-700 text-slate-300">心情±5 怒氣±5</span>
+                        </div>
+                        <div class="font-bold text-xs sm:text-sm text-white group-hover:text-slate-300">跨國財報與學術訪談</div>
+                        <div class="text-[10px] text-slate-400 line-clamp-1">壓抑過嗨心情專用</div>
+                    </button>
+
+                    <button onclick="takeAction('fasting')" class="action-btn flex flex-col items-start p-2.5 rounded-xl bg-gradient-to-br from-indigo-950/90 to-slate-900 border border-indigo-500/40 hover:border-indigo-400 text-left group">
+                        <div class="flex items-center justify-between w-full mb-1">
+                            <span class="text-lg">🧘‍♂️</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300">飢餓±5 怒氣±5</span>
+                        </div>
+                        <div class="font-bold text-xs sm:text-sm text-white group-hover:text-indigo-300">時尚走秀＆空腹燃脂</div>
+                        <div class="text-[10px] text-slate-400 line-clamp-1">消化過飽肚皮・維持帥度</div>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Column: LINE Harassment Window (5 Cols) -->
+        <section id="line-section" class="lg:col-span-5 flex flex-col bg-slate-900/90 backdrop-blur-md retro-border rounded-2xl overflow-hidden transition-all duration-300">
+            <!-- LINE Header -->
+            <div class="px-4 py-3 bg-[#212836] border-b border-slate-700 flex justify-between items-center">
+                <div class="flex items-center gap-2.5">
+                    <div class="relative">
+                        <div class="w-8 h-8 rounded-full bg-[#06C755] flex items-center justify-center text-white font-black text-base shadow">
+                            <i class="fa-brands fa-line text-xl"></i>
+                        </div>
+                        <span id="line-ping-dot" class="hidden absolute -top-0.5 -right-0.5 flex h-3 w-3">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                        </span>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-1.5">
+                            <h2 class="font-bold text-sm text-white">少林寺＆快樂夥伴 (3)</h2>
+                            <span id="unread-badge" class="bg-red-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full animate-bounce">2 則新訊息</span>
+                        </div>
+                        <p class="text-[11px] text-slate-300">成員：主人(蒙奇奇狂魔)、托比(喜熊吃貨)、瑞龍大哥</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <button id="sound-toggle-btn" onclick="toggleLineSound()" class="text-[10px] px-2 py-1 rounded bg-emerald-950/90 hover:bg-emerald-900 text-emerald-300 border border-emerald-600/50 transition flex items-center gap-1" title="切換通知音效">
+                        <i id="sound-icon" class="fa-solid fa-volume-high"></i>
+                        <span id="sound-label">叮咚音效開</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Character Mini Profiles in Chat Header -->
+            <div class="grid grid-cols-2 gap-1.5 p-2 bg-slate-950/90 border-b border-slate-800 text-[11px]">
+                <div class="flex items-center gap-2 bg-slate-900 p-1.5 rounded-lg border border-slate-800">
+                    <div class="text-xl">🐵</div>
+                    <div class="leading-tight">
+                        <div class="font-bold text-amber-300">主人 <span class="text-[9px] bg-red-500/20 text-red-300 px-1 rounded">脾氣差帥哥</span></div>
+                        <div class="text-[10px] text-slate-400">講話直、愛蒙奇奇、偶爾反差萌</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 bg-slate-900 p-1.5 rounded-lg border border-slate-800">
+                    <div class="text-xl">🐻</div>
+                    <div class="leading-tight">
+                        <div class="font-bold text-pink-300">托比 <span class="text-[9px] bg-pink-500/20 text-pink-300 px-1 rounded">喜熊吃貨</span></div>
+                        <div class="text-[10px] text-slate-400">滿嘴幹話、超愛吃、極度怕蟲</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LINE Messages Container -->
+            <div id="line-chat" class="flex-1 p-3.5 space-y-3 overflow-y-auto line-chat-bg max-h-[360px] sm:max-h-[410px]">
+                <!-- Dynamic LINE messages injected here -->
+            </div>
+
+            <!-- LINE Interaction Controls -->
+            <div class="p-3 bg-[#1e2430] border-t border-slate-700">
+                <div class="text-[11px] text-slate-300 mb-2 flex justify-between items-center">
+                    <span>💬 面對他們鍥而不捨的訊息轟炸，大哥決定：</span>
+                    <span id="ignore-streak" class="text-amber-400 font-bold">已連續不讀不回 0 小時</span>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                    <button onclick="handleLineAction('ignore')" class="px-2.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 text-xs font-bold transition flex flex-col items-center">
+                        <span>🙄 已讀不回</span>
+                        <span class="text-[9px] text-slate-400 mt-0.5">怒氣-2 心情+2</span>
+                    </button>
+                    <button onclick="handleLineAction('sticker')" class="px-2.5 py-2 rounded-lg bg-emerald-900/70 hover:bg-emerald-800 text-emerald-100 border border-emerald-600/50 text-xs font-bold transition flex flex-col items-center">
+                        <span>スタンプ 敷衍貼圖</span>
+                        <span class="text-[9px] text-emerald-300 mt-0.5">怒氣-2 心情-1</span>
+                    </button>
+                    <button onclick="handleLineAction('roast')" class="px-2.5 py-2 rounded-lg bg-rose-900/70 hover:bg-rose-800 text-rose-100 border border-rose-600/50 text-xs font-bold transition flex flex-col items-center">
+                        <span>🤬 語音飆罵</span>
+                        <span class="text-[9px] text-rose-300 mt-0.5">怒氣-3 飢餓+1</span>
+                    </button>
+                    <button onclick="handleLineAction('money')" class="px-2.5 py-2 rounded-lg bg-amber-900/70 hover:bg-amber-800 text-amber-100 border border-amber-600/50 text-xs font-bold transition flex flex-col items-center">
+                        <span>🧧 撒錢叫閉嘴</span>
+                        <span class="text-[9px] text-amber-300 mt-0.5">怒氣-3 心情+2</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Extreme Consequence Modal -->
+    <div id="ending-modal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-slate-900 border-2 border-pink-500 rounded-3xl max-w-lg w-full p-6 shadow-2xl neon-glow-pink animate-pop text-center relative overflow-hidden">
+            <div class="text-6xl mb-3" id="ending-emoji">💥</div>
+            <div class="inline-block px-3 py-1 rounded-full bg-red-500/20 border border-red-500/40 text-red-300 text-xs font-black uppercase tracking-widest mb-2" id="ending-trigger">
+                極端狀態觸發！
+            </div>
+            <h3 id="ending-title" class="text-2xl font-black text-white mb-3">結局標題</h3>
+            <p id="ending-desc" class="text-sm text-slate-300 leading-relaxed mb-5 bg-slate-950/80 p-4 rounded-2xl border border-slate-800 text-left"></p>
+            
+            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 mb-5 flex justify-around text-xs">
+                <div>
+                    <div class="text-slate-400">存活時間</div>
+                    <div id="ending-time" class="font-bold text-cyan-400 text-sm">第 1 天</div>
+                </div>
+                <div>
+                    <div class="text-slate-400">最終訂閱</div>
+                    <div id="ending-subs" class="font-bold text-pink-400 text-sm">1.1 億</div>
+                </div>
+                <div>
+                    <div class="text-slate-400">解鎖結局進度</div>
+                    <div id="ending-progress" class="font-bold text-amber-400 text-sm">1 / 31</div>
+                </div>
+            </div>
+
+            <div class="flex gap-3 justify-center">
+                <button onclick="recoverFromCrisis()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm border border-slate-600 transition">
+                    🚑 動用千億鈔能力搶救 (繼續玩)
+                </button>
+                <button onclick="restartGame()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-black text-sm shadow-lg transition">
+                    🔄 開啟平行時空新人生
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Collection Modal -->
+    <div id="collection-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-2xl w-full p-6 shadow-2xl animate-pop max-h-[85vh] flex flex-col">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3 mb-4">
+                <h3 class="text-lg font-black text-white flex items-center gap-2">
+                    <i class="fa-solid fa-trophy text-amber-400"></i> 瑞龍大哥的荒謬結局＆傳奇圖鑑
+                </h3>
+                <button onclick="closeCollectionModal()" class="text-slate-400 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="overflow-y-auto space-y-3 pr-1 flex-1" id="collection-list">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class UniqueDeck {
+            constructor(items) {
+                this.items = [...items];
+                this.used = new Set();
+            }
+            draw() {
+                if (this.used.size >= this.items.length) {
+                    this.used.clear(); // Reset if all used up
+                }
+                let available = this.items.filter((_, idx) => !this.used.has(idx));
+                if (available.length === 0) {
+                    this.used.clear();
+                    available = [...this.items];
+                }
+                const randomIndex = Math.floor(Math.random() * available.length);
+                const chosenItem = available[randomIndex];
+                const originalIndex = this.items.indexOf(chosenItem);
+                this.used.add(originalIndex);
+                return chosenItem;
+            }
+        }
+
+        const state = {
+            day: 1,
+            hour: 8,
+            mood: 60,     // Safe: 15 ~ 85
+            anger: 35,    // Safe: 15 ~ 85
+            hunger: 40,   // Safe: 15 ~ 85
+            subs: 1.08,   // in 100 millions (億)
+            revenue: 4280,// in 100 millions (億)
+            toys: 8842,
+            ignoreHours: 0,
+            unreadCount: 0,
+            soundEnabled: true,
+            unlockedEndings: new Set()
+        };
+
+        let audioCtx = null;
+        function playLineDingDong() {
+            if (!state.soundEnabled) return;
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const now = audioCtx.currentTime;
+                const osc1 = audioCtx.createOscillator();
+                const osc2 = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc1.type = 'sine';
+                osc2.type = 'triangle';
+
+                osc1.frequency.setValueAtTime(987.77, now);
+                osc1.frequency.setValueAtTime(1318.51, now + 0.09);
+                osc2.frequency.setValueAtTime(1975.53, now);
+                osc2.frequency.setValueAtTime(2637.02, now + 0.09);
+
+                gain.gain.setValueAtTime(0.14, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+
+                osc1.connect(gain);
+                osc2.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc1.start(now);
+                osc2.start(now);
+                osc1.stop(now + 0.38);
+                osc2.stop(now + 0.38);
+            } catch (e) {}
+        }
+
+        function toggleLineSound() {
+            state.soundEnabled = !state.soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            const label = document.getElementById('sound-label');
+            const btn = document.getElementById('sound-toggle-btn');
+            if (state.soundEnabled) {
+                icon.className = "fa-solid fa-volume-high";
+                label.textContent = "叮咚音效開";
+                btn.className = "text-[10px] px-2 py-1 rounded bg-emerald-950/90 hover:bg-emerald-900 text-emerald-300 border border-emerald-600/50 transition flex items-center gap-1";
+                playLineDingDong();
+            } else {
+                icon.className = "fa-solid fa-volume-xmark";
+                label.textContent = "已靜音";
+                btn.className = "text-[10px] px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-400 border border-slate-700 transition flex items-center gap-1";
+            }
+        }
+
+        function showLineNotificationToast(sender, text) {
+            const container = document.getElementById('line-toast-container');
+            if (!container) return;
+
+            while (container.children.length >= 3) {
+                container.removeChild(container.firstChild);
+            }
+
+            const isMaster = sender === 'master';
+            const avatar = isMaster ? "🐵" : "🐻";
+            const tagColor = isMaster ? "text-amber-300" : "text-pink-300";
+
+            const toast = document.createElement('div');
+            toast.className = "pointer-events-auto cursor-pointer bg-slate-900/95 backdrop-blur-md border-2 border-[#06C755] rounded-2xl p-3 shadow-2xl line-toast-enter flex items-start gap-2.5 hover:bg-slate-800/95 transition";
+            toast.onclick = () => {
+                const lineSec = document.getElementById('line-section');
+                if (lineSec) {
+                    lineSec.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+                dismissToast(toast);
+            };
+
+            toast.innerHTML = `
+                <div class="relative shrink-0">
+                    <div class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-600 flex items-center justify-center text-xl shadow-inner">
+                        ${avatar}
+                    </div>
+                    <div class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#06C755] flex items-center justify-center text-white text-[9px] shadow">
+                        <i class="fa-brands fa-line"></i>
+                    </div>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-1">
+                        <span class="text-[10px] font-black text-[#06C755] tracking-wider uppercase flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#06C755] animate-ping"></span>
+                            LINE 群組新訊息
+                        </span>
+                        <span class="text-[10px] text-slate-400 font-mono">剛剛</span>
+                    </div>
+                    <div class="text-xs font-bold ${tagColor} truncate mt-0.5">
+                        少林寺＆快樂夥伴 · ${isMaster ? "主人" : "托by"}
+                    </div>
+                    <p class="text-xs text-slate-200 line-clamp-2 mt-0.5 leading-snug">
+                        ${text}
+                    </p>
+                </div>
+                <button class="text-slate-400 hover:text-white text-xs px-1" onclick="event.stopPropagation(); dismissToast(this.parentElement)">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            `;
+
+            container.appendChild(toast);
+
+            const lineSec = document.getElementById('line-section');
+            const pingDot = document.getElementById('line-ping-dot');
+            if (lineSec) {
+                lineSec.classList.remove('animate-shake', 'line-ring-glow');
+                void lineSec.offsetWidth;
+                lineSec.classList.add('animate-shake', 'line-ring-glow');
+                setTimeout(() => {
+                    lineSec.classList.remove('line-ring-glow');
+                }, 1400);
+            }
+            if (pingDot) {
+                pingDot.classList.remove('hidden');
+            }
+
+            playLineDingDong();
+
+            setTimeout(() => {
+                dismissToast(toast);
+            }, 4500);
+        }
+
+        function dismissToast(toastEl) {
+            if (!toastEl || !toastEl.parentElement) return;
+            toastEl.classList.remove('line-toast-enter');
+            toastEl.classList.add('line-toast-exit');
+            setTimeout(() => {
+                if (toastEl && toastEl.parentElement) {
+                    toastEl.parentElement.removeChild(toastEl);
+                }
+            }, 240);
+        }
+
+        const outfitsDeck = new UniqueDeck([
+            "👕 穿搭：90年代絕版美式火焰襯衫＋寬版工裝褲＋限量潮鞋",
+            "🧥 穿搭：復古丹寧拼接皮衣＋銀飾疊戴＋超萌小熊軟糖耳環",
+            "🕶️ 穿搭：Y2K螢光撞色運動套裝＋復古飛行員墨鏡（帥中帶可愛）",
+            "🎩 穿搭：高訂剪裁西裝外套混搭辛普森家庭古著T恤＋手工皮靴",
+            "🦊 穿搭：日本原宿風可愛針織毛衣＋美式重機皮褲（極致反差感）",
+            "👑 穿搭：鑲鑽跨國總裁風衣＋腰間掛著剛標到的1984年復古玩具吊飾",
+            "🌈 穿搭：洛杉磯設計師聯名塗鴉衛衣＋復古卡車帽，走在嘉義文化路回頭率200%"
+        ]);
+
+        const jellyActionsDeck = new UniqueDeck([
+            "🐶 果凍正在總裁辦公室的地毯上翻肚肚討摸",
+            "🐶 果凍叼著一顆純金打造的潔牙骨跑來跑去",
+            "🐶 果凍趴在大哥價值百萬的復古美式沙發上打呼",
+            "🐶 果凍穿上了大哥幫牠買的迷你美式復古牛仔裝",
+            "🐶 果凍對著大哥手機裡跳出來的主人與托比訊息叫了兩聲",
+            "🐶 果凍正跟嘉義老家的媽媽和姐姐開心玩飛盤"
+        ]);
+
+        const wackyThoughtsDeck = new UniqueDeck([
+            "💭 突然想化身頂級電腦駭客，入侵全球氣象局把明天變成下黃金雨",
+            "💭 考慮去當超級英雄拯救世界，但披風材質一定要是手工復古丹寧布",
+            "💭 妄想自己是太空總署總指揮，正準備下令發射火箭去月球開火雞肉飯分店",
+            "💭 突然覺得自己其實是異世界穿越回來的魔王，正在視察人間界的美食",
+            "💭 腦中浮現去當深海探險家的念頭，想去馬里亞納海溝找史前鯊魚一起喝珍奶",
+            "💭 想要組建一支由一萬隻果凍組成的拯救地球特攻隊",
+            "💭 突然想去好萊塢當動作片男主角，挑戰一邊開跑車一邊用雷射筆刻印章",
+            "💭 妄想自己擁有隱形超能力，正準備去偷看主人把幾隻蒙奇奇藏在被窩裡",
+            "💭 突然燃起強烈的正義感，想把全台灣的蚊子全部抓來接受審判",
+            "💭 幻想自己是中世紀城堡的傳奇領主，正在嘉義總部檢閱皇家騎兵隊",
+            "💭 突然想去當神祕考古學家，在嘉義東市場地底下挖掘失落的古早味肉圓寶藏",
+            "💭 腦洞大開想發明一台會自己唱歌的智慧馬桶，造福全人類",
+            "💭 突然想當賽車手，開著改裝挖土機去挑戰拉力賽冠軍",
+            "💭 幻想自己是拯救宇宙的時空旅行者，正在修正明天早餐要吃雞肉飯還是漢堡的歷史",
+            "💭 突然想去當孤獨的美食哲學家，閉上眼睛思考沙鍋魚頭的靈魂深處",
+            "💭 妄想自己是跨國特務007，手裡的原子筆其實是會發射雷射光的高級印章",
+            "💭 突然想當動漫裡的主角，在大喊『印章之力啊！』的瞬間帥氣登場",
+            "💭 幻想自己是超級黑客帝國的救世主，正在用眼神操控嘉義總部的冷氣溫度",
+            "💭 突然想去當動物園長，親自教獅子跟老虎怎麼學果凍翻肚肚",
+            "💭 妄想自己是古代武林盟主，正準備用筷子夾走全天下最頂級的火雞肉片",
+            "💭 突然想去當樂團主唱，在地球大氣層外開一場無重力搖滾演唱會",
+            "💭 幻想自己是化學天才，正在調配能讓心情瞬間嗨到外太空的特製手搖飲",
+            "💭 突然想去當流浪詩人，拿著吉他在嘉義高鐵站對著空氣深情告白",
+            "💭 妄想自己是未來機器人，正在計算人類一天到底需要喝幾杯葡萄柚綠茶",
+            "💭 突然想去當深山隱者，在阿里山頂蓋一座專門玩復古玩具的秘密基地",
+            "💭 幻想自己是尋寶獵人，正拿著藏寶圖準備去尋找傳說中的絕版麥當勞公仔",
+            "💭 突然想去當時尚大帝，宣佈全人類明天開始必須穿火焰襯衫上班",
+            "💭 妄想自己是神祕預言家，預測下一支影片觀看數會突破一億兩千萬",
+            "💭 突然想去當街頭藝術家，在嘉義牆壁上噴漆畫一隻巨大的黃金印章貓",
+            "💭 幻想自己是跨國金融巨鱷，正準備用零用錢買下整座太平洋",
+            "💭 突然想去當馬戲團長，訓練果凍表演單輪車跟空中翻滾",
+            "💭 妄想自己是吸血鬼伯爵，不過最愛喝的不是血而是冰涼的冬瓜檸檬",
+            "💭 突然想去當造船廠老闆，打造一艘外型長得像巨型漢堡的豪華遊艇",
+            "💭 幻想自己是星際艦隊長官，正在巡視外太空有沒有外星人偷看你的YT頻道",
+            "💭 突然想去當玩具修理大師，拯救全世界所有缺胳膊少腿的1980年代機器人",
+            "💭 妄想自己是神燈精靈，可以幫粉絲實現『每天都有吃不完的雞肉飯』的願望",
+            "💭 突然想去當盲盒設計師，推出一款全球只有一隻的純金瑞龍大哥公仔",
+            "💭 突然想去當登山家，背著上萬件復古玩具挑戰聖母峰頂",
+            "💭 幻想自己是荒島求生專家，但行李箱塞滿了八十罐高級髮蠟跟香水",
+            "💭 突然想去當氣象主播，用最帥氣的姿勢播報明天嘉義會下起珍珠奶茶雨",
+            "💭 妄想自己是圖書館館長，把全世界的漫畫小說全部換成你的傳奇自傳",
+            "💭 突然想去當蛋糕師傅，烘焙一個長得跟你的黃金印章一模一樣的巨型生日蛋糕",
+            "💭 幻想自己是音樂製作人，正準備幫果凍的打呼聲混音成年度百大暢銷電音單曲",
+            "💭 突然想去當古董鑑定師，一眼看出路邊攤阿伯的碗是不是價值連城的骨董",
+            "💭 妄想自己是飛行員，開著復古雙翼飛機在天空寫出『瑞龍大哥最帥』幾個大字",
+            "💭 突然想去當園藝大師，在嘉義總部培育會開出金幣的花朵",
+            "💭 幻想自己 is 魔術師，輕輕彈指就能讓主人的手機瞬間消失一小時",
+            "💭 突然想去當潛水教練，帶領海底魚群進行一場嚴格的時尚台步走秀",
+            "💭 妄想自己是時間守護者，正忙著把快樂的時光調慢三倍讓大哥多睡一會兒",
+            "💭 突然想去當無厘頭哲學家，認真思考『先有雞肉飯還是先有瑞龍大哥』的世紀難題"
+        ]);
+
+        // 200+ expanded unique action narratives across categories
+        const rawActionNarratives = {
+            empire: [
+                "【台灣 Mr. Beast 震撼企劃】你在嘉義高鐵站旁包下整座廢棄遊樂園，舉辦萬人躲貓貓大賽！",
+                "【跨國印章帝國】你親自操刀設計智能夜光印章，全球員工同步連線直播開箱。",
+                "【百億撒幣新形式】邊搭雲霄飛車邊幫粉絲刻開運印章，單支影片狂吸千萬觀看！",
+                "【改變世界的總裁】宣佈影片破三讚就在全球蓋百座復古玩具博物館，瞬間點燃網路。",
+                "【跨國視訊決策】一邊擼果凍一邊主持歐美日韓萬人視訊大會，霸氣批准年度分紅。",
+                "【嘉義快閃挑戰】舉辦五十人吃辣拌麵大賽，勝者直接拿走純金湯匙。",
+                "【印章工廠改造】將總部生產線全面升級為賽博朋克霓虹風，單日預購量破百萬。",
+                "【天際線極限企劃】租熱氣球在高空發放百萬紅包，剪輯節奏快到觀眾忘記呼吸。",
+                "【無人島無厘頭挑戰】帶員工去澎湖比手勢猜成語，輸的人穿粉紅兔裝跳海。",
+                "【AI瑞龍分身】花十億研發會講十種語言的AI機器人代替開會，自己在家打電動。",
+                "【創作者圓桌會議】在羅浮宮前舉辦百大YT聚會，成立互助基金。",
+                "【隨機路人盲盒】在火車站隨機送阿嬤勞斯萊斯與純金印章，阿嬤當場跳健康操。",
+                "【海底撈月直播】穿潛水裝在墾丁跟鯊魚一起直播刻印章，深海生物迷在線圍觀。",
+                "【荒漠狂奔挑戰】開復古拖拉機運送印章橫跨杜拜沙漠，沿途撒幣引發狂奔。",
+                "【跨國連線PK】與美國網紅比賽刻印章，兩小時完美完勝。",
+                "【午夜突襲發薪】凌晨突襲總部把年終獎金換成金磚疊在辦公桌上。",
+                "【高鐵車廂快閃】包下台灣高鐵商務車廂舉辦快問快答，答對送百萬支票。",
+                "【極速印章雕刻】挑戰一分鐘內用雷射雕刻出一百個貓咪造型開運章。",
+                "【嘉義巨型扭蛋機】在嘉義市中心設置兩層樓高巨型扭蛋機，轉一次送限量潮玩。",
+                "【全球粉絲大露營】邀請五萬名忠實粉絲到嘉義農場露營，親自烤肉給所有人吃。",
+                "【挑戰吉尼斯紀錄】動員一萬人同時在鏡頭前蓋印章，成功創下全新的世界紀錄。",
+                "【跨國慈善快閃】無預警空降偏鄉小學，把圖書館翻新並送每位小朋友一台平板。",
+                "【深夜直播談心】開直播跟粉絲聊創業辛酸史，最後變成搞笑吐槽大會。",
+                "【荒野求生拍片】帶著攝影團隊去中央山脈拍三天兩夜極限挑戰，笑果連連。",
+                "【總裁辦公室突襲】直播突襲全球分公司實習生，隨機抽出一名幸運兒送一千萬創業基金。",
+                "【復古音響巡迴展】在全台巡迴展出骨董黑膠唱片，吸引無數音樂發燒友朝聖。",
+                "【挑戰千人翻杯子】在嘉義體育館舉辦千人同時翻水瓶挑戰，現場氣氛嗨到最高點。",
+                "【跨國街頭突襲】在紐約時代廣場隨機挑選路人進行快問快答，答對送機票來嘉義吃雞肉飯。",
+                "【金屬印章特展】將歷年來最珍貴的千款純金印章搬進美術館，舉辦為期一個月的免費特展。",
+                "【深夜百萬QA】開直播回答粉絲各種無厘頭問題，順便現場抽獎送出十支限量雷射印章。",
+                "【雲端總裁視察】利用最新的全息投影技術，同時出現在全球五十個分公司視察業務。",
+                "【極速賽車企劃】贊助F1車隊並在車身印上巨型瑞龍大哥Q版頭像，全球車迷瘋狂搶購同款帽T。",
+                "H1【嘉義文創市集】包下整條文化路夜市辦文創市集，邀請百位獨立藝術家擺攤交流。",
+                "【荒島尋寶大賽】在無人島埋入一千個藏寶箱，邀請全球粉絲組隊搭船去尋找。",
+                "【深夜錄音室奇遇】在錄音室錄到一半突然靈感爆發，直接寫出一首講述復古玩具的洗腦電音。"
+            ],
+            romance: [
+                "【顏值與荷爾蒙碰撞】約了刺青超帥酷哥跟冷豔重機酷姊在私人招待所狂野開趴。",
+                "【混亂私生活】時尚模特兒酷哥與地下樂團主唱酷姊同時敲門，多巴胺爆棚。",
+                "【深夜高鐵站幽會】開敞篷跑車接酷哥酷姊到私人美式摩鐵包場。",
+                "【泳池畔歡愉】在恆溫泳池旁與三位酷哥酷姊熱吻，水花四濺嗨到最高點。",
+                "【跨國約砲傳奇】日系潮流酷哥與美式街頭酷姊搭私人飛機來嘉義找你約會。",
+                "【頂樓天台夜色】在豪宅天台鋪野餐墊喝紅酒，伴隨夜景擦出激烈愛火。",
+                "【私人遊艇派對】開遊艇到外海與四位火辣酷哥酷姊伴隨電音搖擺。",
+                "【密室情趣冒險】在辦公室密室跟潮牌主理人玩角色扮演，刺激感破表。",
+                "【街頭轉角邂逅】在文化路夜市巧遇外國模特兒，三秒鐘直接帶回招待所。",
+                "【音樂祭後台】在草地音樂祭後台被三位地下樂團成員包圍，眼神拉絲。",
+                "【攝影棚擦槍走火】在拍攝現場跟攝影師眼神交流過度，收工直接反鎖辦事。",
+                "【溫泉鄉激情碰撞】在關子嶺包下高級私人湯屋，享受極致放縱與歡愉。",
+                "【復古車廂呢喃】搭乘私人復古火車廂，在搖晃列車裡享受私密擁吻。",
+                "【深夜畫室靈感】在藝術工作室跟男友探討人體結構，從深夜畫到天亮。",
+                "【地下酒吧焦點】在最潮酒吧登場成為全場焦點，帶走兩位最帥調酒師。",
+                "【露營車密會】開著豪華露營車到海邊看星星，與兩位帥哥度過浪漫不眠夜。",
+                "【復古舞廳狂歡】包下復古迪斯可舞廳，與辣妹帥哥尬舞到腿軟。",
+                "【深夜滑雪場約會】搭專機飛日本滑雪場，在雪地中享受火熱的擁抱。",
+                "【藝術展私人導覽】包下美術館夜間導覽，在展場角落與心儀對象熱吻。",
+                "【頂級SPA按摩】在私人三溫暖享受雙人精油按摩，身心徹底鬆弛。",
+                "【沙漠星空帳篷】在杜拜沙漠豪華帳篷裡數星星，享受浪漫異國戀情。",
+                "【深夜書店尋書】在24小時書店巧遇氣質作家，兩人躲在書架後悄悄調情。",
+                "【遊樂園旋轉木馬】包下旋轉木馬跟辣模一起拍照，童心與性感交織。",
+                "【私人飛機密會】在萬米高空的私人專機艙內享受無人打擾的甜蜜時光。",
+                "【深夜天台派對】在東京六本木頂樓舉辦私人派對，與兩位日本潮模伴隨音樂搖擺。",
+                "【復古唱片行邂逅】在倫敦獨立唱片行跟帥氣DJ眼神交會，直接約好晚上一起喝一杯。",
+                "【巴黎塞納河畔】租下浪漫玻璃船與時尚模特兒共進晚餐，河風徐徐燈火迷人。",
+                "【私人溫室約會】在豪宅玻璃花房裡鋪滿玫瑰花瓣，與心儀對象享受浪漫私密對話。",
+                "【深夜霓虹街頭】開著跑車載著辣模在台北信義區深夜狂飆，享受速度與激情。",
+                "【藝術家工作室】拜訪知名雕塑家男友，在充滿藝術气息的工作室裡度過激情夜晚。",
+                "【頂級溫泉渡假村】包下箱根高級溫泉會館，與兩位日系帥哥共度極致放鬆的假期。",
+                "【深夜錄音室呢喃】在深夜無人的錄音室裡跟主唱男友合唱情歌，情到深處吻了上去。",
+                "【復古老車俱樂部】帶帥氣車手男友去參觀私人骨董車收藏，兩人在車內甜蜜呢喃。",
+                "【海邊夕陽奔跑】包下私人沙灘與辣模迎著夕陽奔跑，畫面美得像時尚雜誌封面。",
+                "【深夜深夜食堂】收工後帶三位酷哥去嘉義巷弄吃宵夜，隨性大笑互動超甜。"
+            ],
+            toys: [
+                "【美式復古玩具掃貨】在蘇富比拍賣會標下1970年代未拆封肯納星際大戰公仔！",
+                "【玩具王國秘密時光】把自己關在千坪倉庫擦拭80年代太空超人與忍者龜。",
+                "【好萊塢道具收藏】電影道具商送來85年原版回到未來懸浮滑板。",
+                "【潮流玩具策展】幫倉庫裡的麥當勞吉祥物公仔重新打光排列，帥氣度破表。",
+                "【古董街機PK】在私人玩具館打了一整天快打旋風二代，怒氣瞬間歸零。",
+                "【修復稀有鐵皮】戴白手套小心翼翼幫50年代日本機器人上發條。",
+                "【麥當勞叔標本】重金收購早期絕版麥當勞叔叔與漢堡神偷造型電話。",
+                "【星戰光劍點燈】把收藏的兩百把初代光劍全部點亮，宛如置身片場。",
+                "【復古娃娃屋佈置】親手幫70年代芭比娃娃屋鋪迷你地毯與沙發。",
+                "【尋寶直播開箱】開箱美國運來的巨大木箱，裡面裝滿絕版變形金剛G1。",
+                "【老式彈珠台對決】在家裡的復古遊藝間打出最高分，開心得像個小孩。",
+                "【迷你黑膠試聽】用骨董級唱片機播放60年代爵士樂，一邊擦拭公仔灰塵。",
+                "【尋找絕版樂高】透過管道標下1978年初代太空系列樂高城堡。",
+                "【復古拍立得記錄】用骨董拍立得幫心愛的限量公仔拍寫真集。",
+                "【玩具展示櫃特製】砸重金訂製防塵恆溫的頂級防彈玻璃展示櫃。",
+                "【修復古董點唱機】請專家把一台1950年代的美國點唱機完美修復。",
+                "【收集古董徽章】整理幾千枚美式搖滾樂團的絕版金屬胸章。",
+                "【懷舊模型組裝】花一整天組裝小時候買不起的巨大機器人模型。",
+                "【建立玩具圖書館】將珍藏開放給偏鄉小朋友預約參觀，散播歡樂。",
+                "【尋找夢幻卡牌】標下一張極其罕見的1999年初代精靈寶可夢噴火龍卡。",
+                "【修復骨董彈珠台】親手幫一台1970年代的美國老彈珠台換上全新LED燈泡與彈簧。",
+                "【尋找絕版鹹蛋超人】透過日本玩具商買到一套保存完美的1966年原版軟膠怪獸。",
+                "【打造太空船模型房】把一整間客房改造成星際大戰千歲鷹號內裝，擺滿稀有宇宙飛船模型。",
+                "【老式搖馬公仔修復】修復一隻1950年代美式餐廳門口的招牌復古搖馬，可愛度爆表。",
+                "【尋找夢幻肯納人偶】花大錢從美國收藏家手中買下夢寐以求的絕版黑武士未拆封人偶。",
+                "【建立玩具攝影棚】在倉庫搭建迷你街景模型，幫各年代的變形金剛拍時尚商業大片。",
+                "【修復古董手搖電話】把一台1920年代的美國木製手搖電話修到完美發出鈴聲。",
+                "【尋找絕版史努比】在二手拍賣會意外標下一整箱1970年代的花生漫畫主角絨毛娃娃。",
+                "【打造復古玩具博物館】請設計師規劃嘉義總部的地下室，正式命名為瑞龍復古潮玩殿堂。",
+                "【修復老式霓虹招牌】親手點亮一塊從洛杉磯運回來的1980年代復古漢堡店霓虹招牌。",
+                "【尋找夢幻變形金剛】透過管道收購一盒保存完美的初代柯博文金屬合金限定版。",
+                "【打造迷你街機間】搜集十台經典的大型復古街機，在家裡打造專屬的80年代遊藝場。",
+                "【修復骨董幻燈機】用一台1950年代的美國幻燈機在客廳牆上播放當年的彩色玩具照片。",
+                "【尋找絕版米奇公仔】標下一尊半身高的1930年代古董華特迪士尼米奇原版手繪雕像。",
+                "【玩具倉庫大整理】花一整天把幾萬件收藏按照年份與品牌完美分類，身心靈得到極大療癒。"
+            ],
+            family: [
+                "【溫馨嘉義家庭時光】帶果凍回老家陪爸媽泡茶，媽媽切了超甜木瓜超幸福。",
+                "【遛狗與親情充電】牽果凍陪爸媽去嘉義公園散步，姐姐幫你拍超萌合照。",
+                "【果凍專屬下午茶】親手幫果凍準備頂級鮮食，買爸媽愛吃的傳統大餅回家。",
+                "【全家人看首播】窩在老家客廳抱著果凍，陪爸媽姐姐看你千萬觀看新影片。",
+                "【陪媽媽逛市場】戴墨鏡陪媽媽去東市場買菜，攤販阿姨塞一大包土魠魚羹。",
+                "【姐姐時尚顧問】姐姐挑了一件螢光綠外套要你穿，全家人笑成一團。",
+                "【幫果凍洗澎澎】在庭院幫果凍用頂級玫瑰精油洗澡，甩你滿臉水花。",
+                "【爸爸泡茶經】陪老爸在院子喝阿里山茶，聽老爸講古早打拼故事。",
+                "【全家聚餐大滿足】帶全家人去包場嘉義頂級無菜單料理餐廳。",
+                "【幫姐姐搬新家】動員保鑣幫忙姐姐搬新家，展現可靠的大哥風範。",
+                "【帶爸媽去日本】包機帶爸爸媽媽去京都賞櫻泡溫泉，孝心滿分。",
+                "【舉辦家庭運動會】在老家院子辦趣味運動會，獎品是現金紅包。",
+                "【陪爸爸修剪花草】在老家院子跟爸爸一起修剪盆栽，享受午後寧靜的父子時光。",
+                "【媽媽拿手菜特輯】在家裡廚房拍媽媽做紅燒肉，順便偷吃一塊被媽媽用鍋鏟敲手。",
+                "【全家拍全家福】請專業攝影師到嘉義老家幫爸媽姐姐拍了一組高質感全家福照片。",
+                "【帶果凍去獸醫健康檢查】開車載果凍去健康檢查，醫生稱讚果凍身材維持得像模特兒。",
+                "【陪姐姐逛街買衣服】幫姐姐挑選了好幾套巴黎高訂洋裝，刷卡不手軟展現霸氣。",
+                "【全家一起看老相片】晚上全家人圍坐在客廳翻看你小时候的糗照，笑聲掀翻屋頂。",
+                "【深夜和爸爸喝一杯】深夜陪老爸在院子喝高粱酒，暢談人生哲學與集團未來藍圖。",
+                "【幫媽媽換新手機】親自幫媽媽設定好智慧型手機的所有功能，教她怎麼用LINE傳貼圖。"
+            ],
+            eat: [
+                "【包場傳奇雞肉飯】包下嘉義最頂老店，嗑十碗鋪滿油蔥酥的特製火雞肉飯！",
+                "【總裁級小吃巡禮】買御香屋葡萄柚綠茶與林聰明沙鍋魚頭，請排隊鄉親買單。",
+                "【米其林主廚空降】用私人飛機請巴黎三星主廚到豪宅特製十道式和牛饗宴。",
+                "【深夜宵夜狂歡】保鑣買了一整桌阿婆烤玉米與豆漿油條，胃被完美安撫。",
+                "【大胃王挑戰】一口氣嗑掉五碗特大號雞肉飯配貢丸湯，老闆娘笑開懷。",
+                "【東石鮮蚵吃到飽】包漁港一整家海鮮棚，現烤鮮蚵鮮甜海味爆表。",
+                "【文化路夜市掃街】從頭到尾吃過郭家雞肉飯與碳烤乾魷魚，疲憊全消。",
+                "【阿里山茶香便當】品嚐產地直送的茶葉排骨便當，口感清新獨特。",
+                "【東市場肉圓巡禮】一口氣品嚐三家不同流派的嘉義在地傳統肉圓。",
+                "【頂級和牛燒肉】包下私人包廂享用入口即化的頂級宮崎和牛燒肉。",
+                "【文化路炭烤土司】深夜去排隊買炭烤三明治配木瓜牛奶，簡單樸實卻美味無敵。",
+                "【嘉義涼麵美乃滋特輯】品嚐在地特有加白醋（美乃滋）的涼麵，口感清爽滑順超驚艷。",
+                "【頂級壽司包場】請日本米其林壽司之神弟子來嘉義私人招待所，現場捏製頂級生魚片握壽司。",
+                "【砂鍋魚頭外燴】直接請林聰明砂鍋魚頭老闆到豪宅擺十桌宴請集團員工，香氣四溢。",
+                "【東市場牛雜湯早午餐】清晨去市場喝一碗熬煮八小時的溫體牛雜湯，暖胃又充滿元氣。"
+            ],
+            sing: [
+                "【千萬錄音室練唱】在頂級錄音室錄製新單曲《印章蓋在你心上》，高音帥炸！",
+                "【線上萬人演唱會】開YT直播彈吉他唱歌，同時在線人數突破八百萬人！",
+                "【MV唱跳大製作】帶領五百名舞者在故宮南院前拍新歌MV，動感帥氣。",
+                "【錄音室即興饒舌】隨性Freestyle一段嘲笑托比怕蟲的饒舌，笑翻全場。",
+                "【不插電吉他療癒】深夜在豪宅自彈自唱療癒老歌，連果凍都安靜聆聽。",
+                "【跨國合作單曲】與美國葛萊美獎得主線上連線合唱洗腦神曲。",
+                "【拍攝動感舞蹈】在鏡頭前展現專業級街舞快閃，魅力四射。",
+                "【頂級錄音室混音】花一整天在洛杉磯頂級錄音室調整新歌的低音頻率，追求完美音質。",
+                "【不插電音樂沙龍】在嘉義總部頂樓辦了一場小型不插電音樂會，伴隨吉他聲享受微風。",
+                "【跨國線上合唱】與歐洲知名交響樂團連線，為你的新單曲錄製磅礡的弦樂背景音。"
+            ],
+            grind: [
+                "【地獄級碳排稽核】連開兩小時歐盟印章碳稅會議，枯燥數據讓過嗨大腦冷靜。",
+                "【審核萬名員工KPI】逐一檢視全球分公司無聊財報與法務合約，火氣微微上升。",
+                "【應付政商名流】出席極度沉悶的跨國經貿高峰會，聽老頭子講官腔。",
+                "【專利法規研讀】花兩小時審閱美國印章專利侵權訴訟文件，冷卻過嗨情緒。",
+                "【跨國稅務清查】聽財務長報告避稅港細節，成功把嗨度壓回正常水位。",
+                "【審閱全球供應鏈合約】花三小時核對幾百張無聊的紙箱採購合約，徹底冷卻過嗨大腦。",
+                "【出席跨國董事會】聽老古董董事們長篇大論講廢話，靠咬筆桿勉強維持禮貌微笑。",
+                "【法務合規審查】逐字審閱跨國版權授權協議，枯燥文字讓浮躁的心情瞬間平靜。"
+            ],
+            fasting: [
+                "【高強度時尚走秀】換上修身皮衣在私人健身房進行兩小時高強度燃脂特訓。",
+                "【極限跑酷勘景】在阿里山林道進行折返跑與空腹冥想，腸胃食物瞬間消化。",
+                "【伸展台台步特訓】請巴黎名模教練指導高訂台步，燃燒熱量維持完美身材。",
+                "【空腹核心訓練】瘋狂做兩百個仰臥起坐與棒式，把多餘熱量完美消耗。",
+                "【阿里山晨間慢跑】清晨在阿里山森林步道慢跑十公里，吸取芬多精同時完美燃脂。",
+                "【高訂服裝試裝】花兩小時試穿從巴黎帶回來的緊身皮衣，用呼吸法縮腹保持完美曲線。"
+            ]
+        };
+
+        const actionNarratives = {
+            empire: new UniqueDeck(rawActionNarratives.empire),
+            romance: new UniqueDeck(rawActionNarratives.romance),
+            toys: new UniqueDeck(rawActionNarratives.toys),
+            family: new UniqueDeck(rawActionNarratives.family),
+            eat: new UniqueDeck(rawActionNarratives.eat),
+            sing: new UniqueDeck(rawActionNarratives.sing),
+            grind: new UniqueDeck(rawActionNarratives.grind),
+            fasting: new UniqueDeck(rawActionNarratives.fasting)
+        };
+
+        // 200+ Expanded LINE Messages Across All Life Aspects (Guaranteed Unique via UniqueDeck)
+        const rawMasterMessages = [
+            { text: "喂陳瑞龍，你死去哪了？訊息是不會回是不是？限你三秒鐘出現，不然我把你那個什麼破美式玩具頭扭下來。", note: "（傳了一張超兇的自拍照，但背景床上擺滿了20隻穿蕾絲裙的蒙奇奇）" },
+            { text: "幹，我剛經過玩具店看到這隻日本限定版草莓蒙奇奇，眼睛圓滾滾的超可愛... 靠北你別誤會，我是順便拍給你看而已，不准笑！", note: "（傲嬌反差萌發作中）" },
+            { text: "你新影片那個撒一億的企劃有夠白痴，但剪輯節奏還行啦。喂，幫我刻一個蒙奇奇造型的純金印章，明天要拿到，聽到沒？", note: "（講話超直又霸道）" },
+            { text: "媽的今天出門遇到一個走路超慢的路人，氣死我了！結果我剛剛幫我家的蒙奇奇換水手服的時候不小心扯掉一顆釦子，你那邊有沒有頂級裁縫師？快派來！", note: "" },
+            { text: "已讀不回是怎樣？當台灣 Mr. Beast 了不起喔？信不信我現在直接殺去嘉義把你那些酷哥酷姊全部轟出去？...順便問一下果凍今天有沒有想我？", note: "（嘴硬心軟）" },
+            { text: "嘖，煩死了，我剛去剪頭髮，設計師剪得超帥，連我自己照鏡子都被帥到生氣。傳一張給你洗洗眼睛，不用太感謝我。", note: "（附上超有個性臭臉帥照）" },
+            { text: "喂你去美國標古董玩具的時候，順便幫我看有沒有 1974 年初代雙胞胎蒙奇奇。少廢話，沒標到你就死定了！", note: "" },
+            { text: "靠，我剛剛看動物頻道看到睡著，夢到我的蒙奇奇活過來跟我吵架，醒來還是覺得很火大，都怪你不回訊息害我磁場不對！", note: "（莫名其妙的幽默感）" },
+            { text: "你那首新歌副歌超洗腦，害我剛剛邊幫蒙奇奇梳毛邊哼出來，超丟臉！你給我負責把這首歌下架喔！", note: "" },
+            { text: "人呢？死在嘉義火雞肉飯碗裡了喔？", note: "" },
+            { text: "喂！我昨天夢到你竟然把我的蒙奇奇拿去送給粉絲當抽獎禮物，我直接在夢裡氣醒！趕快發誓你沒幹這種蠢事！", note: "" },
+            { text: "跟你說隔壁鄰居一直吵，吵得我家蒙奇奇都睡不著覺。你叫你公司的保全去幫我把整棟樓買下來清空！", note: "（霸道總裁上身）" },
+            { text: "這張照片裡的帽子好看嗎？我覺得很適合我的蒙奇奇，順便幫我訂做一頂等比例放大版的給我戴。", note: "" },
+            { text: "為什麼你每次拍片都可以花幾億撒幣，但我上次買個限量版公仔你還要唸我？不公平！", note: "" },
+            { text: "快點回訊息！不然我把你在嘉義的所有私藏古董玩具全部拿去辦露天拍賣！", note: "" },
+            { text: "今天天氣有夠熱，我的蒙奇奇都快融化了。你那邊有冷氣最強的私人招待所借我避暑一下。", note: "" },
+            { text: "喂！聽說你昨天又跟帥哥約會？照片勒？傳來鑑定一下有沒有比我帥（雖然不可能）。", note: "" },
+            { text: "我有個嚴肅的問題... 如果蒙奇奇跟果凍同時掉進水裡，你先救哪一個？限你一秒回答！", note: "" },
+            { text: "好啦其實剛才那集企劃真的蠻好笑的，特別是你穿那件火焰襯衫的時候。但我才不會承認我很欣賞你！", note: "" },
+            { text: "快把你的私人飛機借我飛一趟東京，我的蒙奇奇想去吃原宿可麗餅！", note: "" },
+            { text: "嘖，又看到有人在網路上酸你，我已經用三個小號去把酸民罵到關版了，不用謝我。", note: "" },
+            { text: "你上次送的那個純金印章質感還不錯，勉強給你的美感打個 85 分好了。", note: "" },
+            { text: "睡了嗎？沒睡的話上線陪我打電動，不准找藉口！", note: "" },
+            { text: "喂，你家的果凍是不是又胖了？上次視訊看牠圓滾滾的，害我都想捏牠臉。", note: "" },
+            { text: "我剛剛不小心把咖啡打翻在限量版公仔上，心情超幹，你趕快講幾個笑話來安慰我！", note: "" },
+            { text: "身為台灣 Mr. Beast，你是不是該贊助我一棟海邊別墅當作我的蒙奇奇博物館？", note: "" },
+            { text: "今天心情不好，不准問原因，反正你傳個紅包過來我就原諒你沒回訊息。", note: "" },
+            { text: "你看這張我拍的天空，美吧？好啦雖然比不上你那件潮牌外套，但也算有氣氛啦。", note: "" },
+            { text: "喂，你上次說那個跨國合作品牌叫什麼名字？我助理笨得跟豬一樣問不到。", note: "" },
+            { text: "好啦好啦，知道你億萬身家大忙人一個。但看到訊息還是給我乖乖回個貼圖！", note: "" },
+            { text: "喂！我今天去咖啡廳被店員稱讚長得像模特兒，但我心裡想著你一定沒我帥。怎樣，不服來辯！", note: "" },
+            { text: "我剛剛在整理衣櫃，發現我的蒙奇奇竟然有五十套衣服，比你還會穿搭，笑死。", note: "" },
+            { text: "陳瑞龍！你再不回訊息，我就把你的私密照片全部設成我手機桌面！", note: "" },
+            { text: "今天天氣這麼好，你竟然窩在嘉義總部不出來，是不是在密謀什麼拯救世界的鬼企劃？", note: "" },
+            { text: "我剛買了一台復古拍立得，第一張本來想拍你，結果底片曝光了，一定是你的帥氣度太強干擾磁場。", note: "" },
+            { text: "喂，我今天去買早餐遇到老闆找錯錢，我直接帥氣地說不用找了，然後轉頭發現自己身上也沒帶現金，超尷尬。", note: "" },
+            { text: "跟你說我昨晚夢到我變成跨國財閥總裁，手下有一萬個員工每天幫我梳頭髮，醒來發現枕邊只有三隻蒙奇奇。", note: "" },
+            { text: "快派你的私人直升機送一杯手搖飲過來，不然我現在就開直播大爆料你小時候穿開襠褲的秘密！", note: "" },
+            { text: "喂！我剛剛在路邊看到有人在拍抖音，舞蹈動作超智障，我錄下來傳給你看，笑死我了。", note: "" },
+            { text: "你上次推薦的那家餐廳根本難吃得要命，我一氣之下把整桌菜打包送給路邊的流浪狗，氣死我了！", note: "" },
+            { text: "陳瑞龍，我今天心情很好，所以不打算罵你。但你還是要轉帳五萬塊給我當作精神賠償。", note: "" },
+            { text: "為什麼每次跟你出門，路人的目光都在看你身上的古董火焰襯衫？明明我今天髮型抓得更帥！", note: "" },
+            { text: "喂，我剛才看你頻道訂閱數又破新高了，請客！地點就選巴黎米其林三星餐廳，機票你出！", note: "" },
+            { text: "好無聊喔，你公司有沒有那種長得帥又聽話的實習生借我兩個來陪我打牌？", note: "" },
+            { text: "我剛剛不小心把咖啡灑在白褲子上，整個人氣到想把地球炸掉，快點說笑話給我聽！", note: "" },
+            { text: "喂！你上次標到的那隻1965年絕版太空超人借我玩三天，少囉嗦，不然我把你家果凍偷走。", note: "" },
+            { text: "今天天氣陰陰的，害我心情也跟著憂鬱起來。決定等一下怒買十個草莓大福來治癒心靈。", note: "" },
+            { text: "你覺得我把頭髮染成螢光粉紅色會不會比你更搶鏡？在線等，急。", note: "" },
+            { text: "剛才去看牙醫，醫生叫我嘴巴張開，我竟然對著醫生唱了一段你的新歌，醫生當場拿鏡子砸我。", note: "" },
+            { text: "喂！限你在五分鐘之內回覆我，否則我就把你的名字寫在便利貼上貼滿整個台北捷運站！", note: "" },
+            { text: "跟你說我今天走在路上撿到一百塊，本想拿去買樂透，結果走進彩券行全花在買珍奶上了。", note: "" },
+            { text: "為什麼你每次拍照都可以擺出那種跩個二萬五千的表情？教我一下祕訣，不然我天天騷擾你。", note: "" },
+            { text: "喂！我剛才點外送，外送員竟然送到隔壁棟去，害我餓肚子等了半小時，氣死老子了！", note: "" },
+            { text: "好想去日本賞楓喔，你那個私人飛機到底修好沒？不要整天只知道刻印章賺大錢！", note: "" },
+            { text: "我剛剛在家裡跳舞扭到腰，現在躺在地上動彈不得，快叫你的私人醫生開救護車來救我！", note: "" },
+            { text: "喂，你覺得我養一隻羊駝當寵物怎麼樣？感覺走在路上超有面子，還能順便幫我修草皮。", note: "" },
+            { text: "今天心情不好不壞，但看到你這麼悠閒我就覺得很不爽，快給我找點事做！", note: "" },
+            { text: "剛才看了一部恐怖片，嚇得我現在上廁所都要開燈還要放音樂，都是你的錯！", note: "" },
+            { text: "喂！你上次答應要送我的純金印章到底寄了沒？郵差伯伯說他沒看到包裹，你是不是想賴帳？", note: "" },
+            { text: "我今天發明了一道新料理：草莓醬拌泡麵。吃了一口覺得人生走到了盡頭，傳給你試毒看看。", note: "" },
+            { text: "快點接電話！我有十萬火急的大事要跟妳討論... 其實只是想問你晚餐要吃火雞肉飯還是牛排。", note: "" },
+            { text: "喂，你那邊有沒有那種不用曬太陽就能變帥的黑科技？我最近曬黑了一點點，超不爽。", note: "" },
+            { text: "剛剛跟朋友打賭輸了，要在頭上頂著一個蘋果走過紅綠燈，照片就不傳了，留點面子給我。", note: "" },
+            { text: "陳瑞龍！你再不回訊息，我就要把你的YouTube頻道密碼改掉，全部改成蒙奇奇跳舞影片！", note: "" },
+            { text: "今天下午去逛街，看到一件超好看的外套，價格只要三十萬，刷你的卡應該只是零頭對吧？", note: "" },
+            { text: "喂，你覺得人類為什麼要上班？直接躺平在家裡吸貓玩玩具不好嗎？人生好難。", note: "" },
+            { text: "我剛剛在客廳踩到果凍的玩具球，整個人華麗滑倒跌個狗吃屎，果凍還在旁邊對我汪汪叫嘲笑我！", note: "" },
+            { text: "快點上線陪我打遊戲，對面的屁孩一直嗆我，我要你開外掛把他們全部打飛！", note: "" },
+            { text: "喂！今天天氣真好，適合去海邊看帥哥。要不要一起去？機票我出，前提是你請客吃海鮮。", note: "" },
+            { text: "我剛剛照鏡子發現自己帥到無死角，決定自戀三分鐘再回你的訊息。好，三分鐘到了。", note: "" },
+            { text: "跟你說一件超扯的事，我昨天夢到外星人綁架我，結果外星人居然跟我要你的親筆簽名印章！", note: "" },
+            { text: "喂！你上次那個撒幣企劃還有缺臨演嗎？我想去拿紅包順便露個臉，增加我的粉絲數。", note: "" },
+            { text: "今天晚上老地方見，不見不散。如果你敢放我鳥，我就把你的古董玩具全部送給資源回收阿伯！", note: "" },
+            { text: "好累喔，成年人的世界怎麼這麼複雜？我只想每天睡到自然醒然後數錢和玩蒙奇奇。", note: "" },
+            { text: "喂，你那件火焰襯衫到底在哪裡買的？我找遍全台北都找不到同款，是不是私藏了？", note: "" },
+            { text: "我剛剛不小心把手機摔到地上，螢幕碎得跟蜘蛛網一樣，心情瞬間跌到谷底，快匯錢來換新手機！", note: "" },
+            { text: "今天晚餐決定吃五十顆水餃，誰都阻止不了我，嗝～（已經吃飽了才打這行字）", note: "" },
+            { text: "喂！你覺不覺得果凍最近眼神越來越有人性了？牠剛剛竟然用鄙視的眼神看我，氣死我了。", note: "" },
+            { text: "好想去荒島度假一個月，手機關機誰也找不到我，除了你必須每天匯生活費給我以外。", note: "" },
+            { text: "剛剛在路上遇到一個推銷員，我本想展現帥氣轉頭就走，結果被盆栽絆倒，帥度直接歸零。", note: "" },
+            { text: "喂，你覺不覺得人生就像一盒巧克力，你永遠不知道下一顆是不是你討厭的薄荷口味？", note: "" },
+            { text: "快點回我！不然我把你在嘉義總部的所有冷氣溫度全部調到最高溫，讓你熱到流汗！", note: "" },
+            { text: "今天心情莫名很好，決定不罵你了。傳一張我的帥照給你欣賞一下，不用太崇拜我。", note: "" },
+            { text: "喂，你上次說那個投資計畫還缺不缺合夥人？我把我的零用錢兩百塊全壓進去了，賺了算我的。", note: "" },
+            { text: "我剛剛在浴室洗澡洗到一半唱歌唱太大聲，結果把隔壁鄰居的貓嚇得跳起來撞到牆壁，罪過罪過。", note: "" },
+            { text: "快接電話啦！我有很嚴肅的感情問題要請教你... 其實是我想知道哪家燒肉店最好吃。", note: "" },
+            { text: "喂！你信不信我現在立刻飛去嘉義把你那萬坪豪宅當成我個人的私人遊樂園？", note: "" },
+            { text: "今天下午開會無聊到快睡著，偷偷在筆記本上畫了一隻穿火焰襯衫的蒙奇奇，畫得超完美。", note: "" },
+            { text: "好想喝冰涼的珍珠奶茶，但是減肥中好痛苦。瑞龍大哥救救我，給我一個不用減肥也能瘦的超能力！", note: "" },
+            { text: "喂，你覺不覺得你最近太囂張了？訂閱數破億了不起喔？（對啦真的很了不起，請客！）", note: "" },
+            { text: "剛剛不小心打翻墨水瓶，把剛寫好的情書全弄髒了，乾脆順便畫一隻烏龜在上面算了。", note: "" },
+            { text: "喂！你那邊有沒有多餘的保鑣借我兩個？我最近走路總覺得有人在偷看我（其實是自己太帥）。", note: "" },
+            { text: "今天晚餐吃火雞肉飯加雙倍雞油，熱量爆炸也甘願！瑞龍大哥要不要一起叫外送？", note: "" },
+            { text: "好無聊喔，來玩成語接龍好不好？我先出題：『億萬富翁』，換你接！", note: "" },
+            { text: "喂！你上次那支影片剪得太快了，我眼睛都快瞎了，下次記得放慢速度照顧一下老人家（雖然我還很年輕）。", note: "" },
+            { text: "剛剛出門忘記帶鑰匙，被鎖在門外半小時，蚊子咬了十幾個包，心情極度不美麗。", note: "" },
+            { text: "喂，你覺得我如果去選嘉義市市長，政見改成『全民天天吃雞肉飯』會不會高票當選？", note: "" },
+            { text: "快點回訊息！不然我把你的名字寫在黑板上罰抄一百遍，順便扣你全國總裁的年終獎金！", note: "" },
+            { text: "今天買了一盆仙人掌，希望牠能幫我擋掉一些爛桃花... 雖然本來就沒有桃花，只有爛訊息。", note: "" }
+        ];
+
+        const rawTobyMessages = [
+            { text: "啊啊啊啊救命啊瑞龍！！我家陽台剛剛飛進來一隻超巨大的嘎抓（蟑螂）而且牠還會飛！！我已經躲在衣櫃裡哭了半小時，快派你的跨國武裝保全來救我嗚嗚嗚🪲😱", note: "（附上一段尖叫高八度的60秒語音）" },
+            { text: "跟你說喔，我剛剛在台南吃到一家滷肉飯配炙燒起司，老闆長得超像日本摔角手，那個大肚腩與絡腮鬍簡直是極品天菜熊！我直接邊看他流汗邊吃了五碗飯🤤🐻", note: "" },
+            { text: "瑞龍大哥～你私生活那麼精彩，身邊有沒有那種體重破百、毛茸茸又愛吃火鍋的可愛大叔熊哥可以介紹給我？你吃肉我喝湯嘛嘿嘿嘿～", note: "（狂傳流口水貼圖）" },
+            { text: "幹話時間到！你知道為什麼我減肥總是失敗嗎？因為食物不會背叛我，但獨角仙跟蜘蛛會要了我的命！對了你嘉義那邊還有沒有沙鍋魚頭，寄十份過來～", note: "" },
+            { text: "嚇死寶寶了！！剛剛走在路上有一隻毛毛蟲從樹上掉到我肩膀上，我當場在路邊跳起街舞加海豚音尖叫，旁邊一個超帥的壯熊路人還以為我中邪了😭😭", note: "" },
+            { text: "喂喂喂你都不回我們訊息，是不是又在跟哪個小鮮肉滾床單？分一點財產給我買和牛跟鹹酥雞啦，我剛吃完兩個便當現在又餓了肚子咕嚕咕嚕叫～🍗🍕", note: "" },
+            { text: "我跟你講一個超好笑的，主人傳訊息罵我吵，結果他不小心傳成他幫蒙奇奇蓋小被被的照片哈哈哈哈哈！笑死我再去吃一塊雞排壓壓驚！", note: "" },
+            { text: "瑞龍～你的印章工廠可不可以幫我做一個「驅蟲結界＋招喚極品熊男」的雙效合一印章？我願意用我珍藏的十張甜不辣兌換券跟你換！", note: "" },
+            { text: "救命！！為什麼夏天會有蟬！！牠剛剛停在我買鹹水雞的攤位旁邊，害我糾結了十分鐘到底要不要衝過去拿我的去骨雞腿跟百頁豆腐😫🍗", note: "" },
+            { text: "我剛去吃吃到飽火鍋，隔壁桌坐了四個穿吊嘎的壯熊大叔，畫面太美害我多吃了八盤霜降牛跟五球哈根達斯🐻🍦", note: "" },
+            { text: "欸欸欸！我剛剛在路上看到一隻肥貓，超像果凍的！害我想起你這個大富翁朋友，順便問一下你今天晚餐吃什麼好料？", note: "" },
+            { text: "救命啊～我房間的天花板上出現一隻蜘蛛，牠正在盯著我笑！我已經把行李打包好準備去住飯店了，你幫我出房費啦！", note: "" },
+            { text: "跟你說我最近發明了一種新吃法，把雞排夾在珍奶裡面（開玩笑的），好啦其實是鹹酥雞配巧克力冰淇淋，超爽！", note: "" },
+            { text: "瑞龍大哥，你上次說要贊助我的『全台灣熊族美食地圖』企劃到底什麼時候撥款？我都把菜單寫好兩萬字了！", note: "" },
+            { text: "啊啊啊剛剛外送員長得超像天菜熊，我緊張到連錢都忘記拿就關門，現在餓到胃痛啦！", note: "" },
+            { text: "我剛剛量體重發現又胖了两公斤... 決定吃一塊炸雞慶祝一下自己的心寬體胖。", note: "" },
+            { text: "瑞龍！快派你的私人直升機幫我空投一份林聰明砂鍋魚頭，我離不開冷氣房啦！", note: "" },
+            { text: "跟你講個八卦，我昨天看到主人的衣櫃裡竟然藏了五十套不同造型的蒙奇奇，超誇張哈哈哈哈！", note: "" },
+            { text: "為什麼夏天蚊子總是特別愛叮我？難道是因為我的血太甜、充滿了珍奶的香氣嗎？", note: "" },
+            { text: "餓死我了餓死我了！你這個億萬富翁快用 LINE Pay 轉帳五千塊給我去吃燒肉！", note: "" },
+            { text: "我剛剛挑戰看恐怖片，結果被裡面的一隻巨型蜘蛛嚇到把整碗泡麵打翻在筆電上，賠錢啦！", note: "" },
+            { text: "瑞龍大哥～你那邊有沒有那種不用出門、躺著就有極品熊男上門送外賣的App？", note: "" },
+            { text: "今天走在路上鞋子竟然斷掉，一定是昆蟲之神對我的懲罰！我要吃雙倍份量的雞肉飯補償心靈！", note: "" },
+            { text: "好想去嘉義找你玩喔，順便擼一下果凍，然後把你的復古玩具全部拿來當抱枕睡覺！", note: "" },
+            { text: "跟你說我最近在練腹肌... 塊狀的那種（雖然上面蓋了一層厚厚的珍奶脂肪），也是腹肌好嗎！", note: "" },
+            { text: "救命啊啊啊！一隻虎頭蜂飛進我的辦公室！我現在是用匍匐前進在打這行字的！", note: "" },
+            { text: "瑞龍你評評理，為什麼帥哥都有男朋友了，而我只有滿櫃子的零食和怕不完的蟲？", note: "" },
+            { text: "好想大吃一頓海鮮痛風餐喔！乾爹瑞龍大哥大發慈悲贊助一下嘛～", note: "" },
+            { text: "我剛才在路邊看到有人在拍抖音，差點以為是你，結果走近看發現對方沒你帥，我就放心了。", note: "" },
+            { text: "肚子好餓、好想吃燒烤、好想遇到天菜熊... 人生三大願望哪時候才能實現啊？", note: "" },
+            { text: "瑞龍救命！我剛才點外送，外送箱裡竟然爬出一隻超大天牛！我已經離家出走坐在超商門口哭了。", note: "" },
+            { text: "欸欸，我剛剛發明了一道新宵夜：起司泡麵加烤雞塊，熱量爆炸但靈魂超滿足！", note: "" },
+            { text: "你上次說要介紹給我的那個健身房天菜教練到底聯絡了沒？我肌肉都快鬆垮了啦！", note: "" },
+            { text: "救命啊！我房間燈泡壞掉變全黑，我懷疑天花板有蜘蛛在埋伏我，快來救駕嗚嗚嗚。", note: "" },
+            { text: "跟你說我今天去買紅豆餅，老闆帥得像模特兒，我害羞到把紅豆餅喊成肉圓，老闆看我的眼神超詭異。", note: "" },
+            { text: "瑞龍大哥！我剛才在公園被一隻超肥的米格魯追著跑，嚇得我手上的雞排掉在地上，我的雞排啊啊啊！", note: "" },
+            { text: "救命啊，我剛才看到一隻馬陸在爬我的拖鞋，我決定把那雙拖鞋永遠留在原地當作祭品送給祂。", note: "" },
+            { text: "好想去吃吃到飽火鍋喔！牛肉、蝦子、蛤蜊、冰淇淋，我全都要！瑞龍乾爹贊助一下啦～", note: "" },
+            { text: "欸瑞龍，你覺不覺得減肥這件事就是人類史上最大的騙局？為什麼水喝都會胖？不公平！", note: "" },
+            { text: "我剛剛在路上看到一個超帥的壯熊大叔在搬重物，我本想上前幫忙，結果自己先扭到腳，超糗。", note: "" },
+            { text: "瑞龍救命！有隻虎頭蜂在我耳邊嗡嗡叫，我現在像一隻陀螺在客廳轉圈圈，快來救我！", note: "" },
+            { text: "今天點了超大份炸雞桶，一邊看電視一邊吃，不小心把整桶吃光光，摸摸肚子覺得罪惡感深重但好爽。", note: "" },
+            { text: "跟你說我最近學會做提拉米蘇，結果糖放成鹽巴，鹹鹹甜甜的口感簡直是黑暗料理界的藝術品。", note: "" },
+            { text: "瑞龍大哥～你那邊有沒有那種專門驅逐所有蟲子的法寶？我願意用我三個月的零食跟你換！", note: "" },
+            { text: "我剛剛在超商買冰淇淋，結帳時店員一直看著我笑，害我以為自己帥度爆表，結果是因為我臉上沾了巧克力醬。", note: "" },
+            { text: "救命啊！我的衣櫃裡竟然傳出奇怪的窸窣聲，我懷疑有史前巨型甲蟲在裡面結繭，不敢開門了啦！", note: "" },
+            { text: "好想去日本吃拉麵、去韓國吃烤肉、去泰國吃東蔭功！人生最大的夢想就是環遊世界吃透透。", note: "" },
+            { text: "瑞龍你評評理，為什麼吃甜食會讓人心情好，但體重計上的數字會讓人心情直接跌落谷底？", note: "" },
+            { text: "我剛剛不小心把珍奶珍珠吸到鼻孔裡（才沒有那麼誇張），好啦是嗆到咳嗽咳到眼淚鼻涕直流，救命。", note: "" },
+            { text: "今天天氣熱到快融化，我決定躲在冷氣房裡當一隻快樂的馬鈴薯，誰叫我出門我就咬誰。", note: "" },
+            { text: "瑞龍救我！剛剛一隻超大喇牙從我頭頂掉下來，我直接表演原地起飛加上海豚音尖叫，鄰居都報警了！", note: "" },
+            { text: "跟你說我最近發明了一種『空氣減肥法』，就是看著別人吃大餐，自己幻想有吃到，結果肚子更餓了。", note: "" },
+            { text: "好想交一個會做飯、身材壯碩又超疼我的天菜熊男友喔！瑞龍大哥身邊有沒有這種優質男生介紹一個？", note: "" },
+            { text: "瑞龍！快派你的私人保全隊來幫我把房間徹底消毒，有不明昆蟲入侵我的領地！", note: "" },
+            { text: "今天去買鹹水雞，老闆問我要不要加辣，我說要大辣，結果現在嘴唇腫得跟香腸一樣，嘶～好辣好爽！", note: "" },
+            { text: "我剛剛看了一部美食紀錄片，肚子裡的飢餓之魂瞬間被喚醒，現在不吃三大碗滷肉飯睡不著覺！", note: "" },
+            { text: "瑞龍大哥～你那邊的氣溫幾度？我這邊熱到快要原地蒸發了，快送十箱冰淇淋過來救援！", note: "" },
+            { text: "救命啊！一隻超會飛的巨型蚊子正在對我發動突襲，我已經拿電蚊拍揮舞了五百次還是抓不到牠！", note: "" },
+            { text: "跟你說我剛剛去逛夜市，一路從頭吃到尾，烤魷魚、地瓜球、臭豆腐、芒果冰，錢包空了但心靈超滿足。", note: "" },
+            { text: "瑞龍你覺不覺得人生苦短，必須盡情享受美食？所以不要再勸我減肥了，那是對食物的不尊重！", note: "" }
+        ];
+
+        const masterMessagesDeck = new UniqueDeck(rawMasterMessages);
+        const tobyMessagesDeck = new UniqueDeck(rawTobyMessages);
+
+        const comboBanterDeck = new UniqueDeck([
+            [
+                { sender: "master", text: "托比你閉嘴好不好？整天吃吃吃跟叫叫叫，吵死了！陳瑞龍你也是，裝死是不是？" },
+                { sender: "toby", text: "兇什麼兇啦主人！我剛剛看到一隻喇牙在牆壁上，我靈魂都要出竅了，哪像你只會抱著蒙奇奇裝酷！" },
+                { sender: "master", text: "你再提蒙奇奇三個字試試看，我把那隻喇牙抓起來塞進你的雞排袋子裡！" }
+            ],
+            [
+                { sender: "toby", text: "欸瑞龍，我剛看到新聞說你身價又暴漲幾百億，請客啦！我要吃帝王蟹配十個壯熊猛男陪酒！" },
+                { sender: "master", text: "白痴喔，他現在八成又在嘉義跟哪個酷哥酷姊鬼混，哪有空理你這隻豬。" },
+                { sender: "toby", text: "哼！你們兩個大帥哥都排擠我，我要去吃三碗大腸麵線安慰我自己脆弱的心靈了嗚嗚～" }
+            ]
+        ]);
+
+        // 31 Extreme Endings Pool
+        const EXTREME_ENDINGS_POOL = {
+            MOOD_HIGH: [
+                {
+                    id: "MOOD_HIGH_1",
+                    emoji: "🚀",
+                    trigger: "心情值過高 (>85 突破天際) — 極樂昇天失控！",
+                    title: "【買下月球刻成印章・全球多巴胺中毒】",
+                    desc: "因為心情嗨到突破人類極限，你直接刷卡買下 NASA 火箭，把整個嘉義火雞肉飯攤販送上外太空，還用雷射把月球表面雕刻成『瑞龍大帝之印』！全球 80 億人抬頭看到月亮變成你的印章，集體陷入狂喜停不下來！"
+                },
+                {
+                    id: "MOOD_HIGH_2",
+                    emoji: "🗽",
+                    trigger: "心情值過高 (>85 突破天際) — 狂喜改造世界地標！",
+                    title: "【把自由女神換成復古潮流穿搭・果凍當選榮譽總統】",
+                    desc: "瑞龍大哥嗨過頭，豪擲三千億美金幫紐約自由女神像換上美式火焰襯衫與垮褲，手裡火炬換成黃金印章！愛犬果凍更憑藉翻肚肚絕技高票當選『地球榮譽大總統』！"
+                },
+                {
+                    id: "MOOD_HIGH_3",
+                    emoji: "🌟",
+                    trigger: "心情值過高 (>85 突破天際) — 宇宙光芒萬丈！",
+                    title: "【發射洗腦單曲衛星・全太陽系跟著搖擺】",
+                    desc: "你把新歌《印章蓋在你心上》透過高頻衛星向全銀河系廣播，外星艦隊聽了竟然跟著音樂跳起舞來，還派飛碟送你一箱外星限定版復古玩具！"
+                },
+                {
+                    id: "MOOD_HIGH_4",
+                    emoji: "🤖",
+                    trigger: "心情值過高 (>85 突破天際) — 機器人狂歡祭！",
+                    title: "【收購波士頓動力・打造十層樓高美式玩具機甲】",
+                    desc: "心情太好直接買下全球頂尖機器人公司，把80年代美式玩具改造成十層樓高的巨型機甲，在嘉義上空辦了一場盛大的機械嘉年華！"
+                },
+                {
+                    id: "MOOD_HIGH_5",
+                    emoji: "🌈",
+                    trigger: "心情值過高 (>85 突破天際) — 彩虹跨國派對！",
+                    title: "【把太平洋染成粉紅色・全球放假一個月】",
+                    desc: "你大手筆把太平洋沿岸海水變成浪漫粉紅色，宣佈全球集團員工帶薪放假一個月，每天在家擼狗吃火雞肉飯！"
+                }
+            ],
+            MOOD_LOW: [
+                {
+                    id: "MOOD_LOW_1",
+                    emoji: "🌧️",
+                    trigger: "心情值過低 (<15 跌入谷底) — 世紀Emo風暴！",
+                    title: "【悲傷情歌癱瘓全球金融・全人類陪哭】",
+                    desc: "瑞龍大哥心情鬱悶到極點，錄了一首嘆氣悲傷單曲上傳 YouTube。全球 1 億訂閱者聽完跟著崩潰大哭，全球股市因為『太心疼瑞龍大哥』而休市一週！"
+                },
+                {
+                    id: "MOOD_LOW_2",
+                    emoji: "🏰",
+                    trigger: "心情值過低 (<15 跌入谷底) — 孤僻自閉防禦！",
+                    title: "【純金印章磚封死豪宅・復古玩具陪葬式冬眠】",
+                    desc: "你用十萬塊純金巨型印章把嘉義豪宅所有門窗封死，躺在八千件玩具堆中宣佈無限期冬眠，各國元首在豪宅外拿大聲公求你出來主持大局！"
+                },
+                {
+                    id: "MOOD_LOW_3",
+                    emoji: "🧸",
+                    trigger: "心情值過低 (<15 跌入谷底) — 玩具孤獨症！",
+                    title: "【把所有公仔面向牆壁罰站・拒絕跟任何人說話】",
+                    desc: "憂鬱症發作，你把家裡上萬件美式復古公仔全部面向牆壁罰站，自己躲在被窩裡抱著果凍嘆氣，全世界粉絲急得在網路上發起尋找瑞龍大哥行動。"
+                },
+                {
+                    id: "MOOD_LOW_4",
+                    emoji: "☕",
+                    trigger: "心情值過低 (<15 跌入谷底) — 咖啡因失效！",
+                    title: "【沉浸在黑色拿鐵的孤獨世界・宣告退隱江湖】",
+                    desc: "心情盪到谷底，你在嘉義總部頂樓喝了一百杯黑咖啡，宣佈將所有跨國事業交給果凍管理，自己去深山當個安靜的美男子。"
+                }
+            ],
+            ANGER_HIGH: [
+                {
+                    id: "ANGER_HIGH_1",
+                    emoji: "🌋",
+                    trigger: "怒氣值過高 (>85 理智斷線) — 總裁雷霆爆走！",
+                    title: "【收購 LINE 總部・滿天蒙奇奇與假蟑螂之罰】",
+                    desc: "被煩到理智斷線！你直接惡意收購 LINE 母公司，下令將主人的手機桌布永久鎖定成『光頭蒙奇奇跳舞』，並派 500 架無人機去托比家空投十萬隻假蟑螂！"
+                },
+                {
+                    id: "ANGER_HIGH_2",
+                    emoji: "☄️",
+                    trigger: "怒氣值過高 (>85 理智斷線) — 天基武器制裁！",
+                    title: "【發射軌道巨型印章衛星・把損友家蓋成大紅印泥坑】",
+                    desc: "你氣到青筋暴起，啟動太空軌道印章衛星，把主人跟托比家的屋頂精準蓋出『吵死了滾』四個大字，兩人頂著滿頭紅印泥在鏡頭前發抖求饒！"
+                },
+                {
+                    id: "ANGER_HIGH_3",
+                    emoji: "🥊",
+                    trigger: "怒氣值過高 (>85 理智斷線) — 鐵拳制裁日！",
+                    title: "【辦理格鬥大賽邀請損友・親自上台把兩人打飛】",
+                    desc: "怒火中燒的你舉辦了『造謠損友格鬥大賽』，親自戴上拳擊手套把主人跟托比打到飛上雲霄，世界觀眾看得拍手叫好！"
+                },
+                {
+                    id: "ANGER_HIGH_4",
+                    emoji: "📢",
+                    trigger: "怒氣值過高 (>85 理智斷線) — 全球廣播飆罵！",
+                    title: "【駭入全球電視台・公開播送三小時飆罵語音】",
+                    desc: "你動用集團技術駭入全球電視網，強制播送你對損友不回訊息的抱怨語音，收視率瞬間打破歷史紀錄！"
+                },
+                {
+                    id: "ANGER_HIGH_5",
+                    emoji: "🚷",
+                    trigger: "怒氣值過高 (>85 理智斷線) — 斷絕社交網路！",
+                    title: "【拔掉全台灣網路線・絕對安靜的清靜世界】",
+                    desc: "氣到直接把全台灣的網路總開關拉閘斷電，世界終於安靜了，只有果凍在旁邊乖乖搖尾巴。"
+                }
+            ],
+            ANGER_LOW: [
+                {
+                    id: "ANGER_LOW_1",
+                    emoji: "🪷",
+                    trigger: "怒氣值過低 (<15 毫無脾氣) — 大哥成佛昇華！",
+                    title: "【聖光籠罩嘉義・跨國企業變身少林禪宗】",
+                    desc: "瑞龍大哥慈悲到散發七彩聖光，不僅秒回所有人訊息，還規定全球員工上班只需打坐跟擼狗，嘉義直接變成宇宙靈性中心！"
+                },
+                {
+                    id: "ANGER_LOW_2",
+                    emoji: "😇",
+                    trigger: "怒氣值過低 (<15 毫無脾氣) — 詭異的溫柔風暴！",
+                    title: "【溫柔秒回十萬字關懷長文・把主人跟托比嚇到報警】",
+                    desc: "你用充滿聖潔光輝的語氣秒回了一篇十萬字的長文並附贈有機蔬菜籃，主人跟托比以為你被外星人奪舍，嚇到去警局報案！"
+                },
+                {
+                    id: "ANGER_LOW_3",
+                    emoji: "🕊️",
+                    trigger: "怒氣值過低 (<15 毫無脾氣) — 和平鴿降臨！",
+                    title: "【宣佈將所有財產分送路人・自己出家當慈善家】",
+                    desc: "脾氣好到沒有極限，你把幾千億身家全部捐給慈善機構，自己穿著修行服在嘉義街頭發送愛心便當。"
+                },
+                {
+                    id: "ANGER_LOW_4",
+                    emoji: "🧸",
+                    trigger: "怒氣值過低 (<15 毫無脾氣) — 擁抱全世界！",
+                    title: "【對每隻路過的小狗與昆蟲深情擁抱・嚇壞所有人】",
+                    desc: "慈悲心大發，連托比最怕的蟑螂靠近你你都溫柔微笑摸牠頭，把托比跟主人嚇得退避三舍。"
+                }
+            ],
+            HUNGER_HIGH: [
+                {
+                    id: "HUNGER_HIGH_1",
+                    emoji: "🦖",
+                    trigger: "HUNGER > 85 (餓到發慌) — 暴食哥吉拉化！",
+                    title: "【餓昏頭買下全台灣雞肉飯・咬傷古董玩具】",
+                    desc: "你餓到把絕版美式公仔當成真漢堡啃了一口，接著把整個嘉義市的雞肉飯跟沙鍋魚頭全部買斷，引發了震驚國際的嘉義糧食危機！"
+                },
+                {
+                    id: "HUNGER_HIGH_2",
+                    emoji: "🍗",
+                    trigger: "飢餓值過高 (>85 餓到發慌) — 床伴變烤雞幻覺！",
+                    title: "【把酷哥酷姊的腹肌當成脆皮燒肉・約會現場變美食獵場】",
+                    desc: "你餓到兩眼發綠光，約會時盯著酷哥的腹肌腦中卻浮現火雞肉片，當場拿出胡椒鹽往人家身上撒並張嘴就咬，嚇得酷哥酷姊奪門而出！"
+                },
+                {
+                    id: "HUNGER_HIGH_3",
+                    emoji: "🍔",
+                    trigger: "飢餓值過高 (>85 餓到發慌) — 瘋狂外送黑洞！",
+                    title: "【掏空全台灣UberEats庫存・堆出雙層漢堡山】",
+                    desc: "極度飢餓使你瘋狂下單一萬份漢堡，在嘉義總部堆成一座高達五十公尺的漢堡山，自己像土石流一樣撲上去狂吃！"
+                },
+                {
+                    id: "HUNGER_HIGH_4",
+                    emoji: "🥩",
+                    trigger: "飢餓值過高 (>85 餓到發慌) — 生吞和牛危機！",
+                    title: "【來不及煮直接生吞整頭和牛・嚇壞法國米其林主廚】",
+                    desc: "餓到失去理智，把私人飛機空運來的生和牛整頭抓起來啃，法國主廚當場嚇暈倒在廚房地毯上。"
+                },
+                {
+                    id: "HUNGER_HIGH_5",
+                    emoji: "🥥",
+                    trigger: "飢餓值過高 (>85 餓到發慌) — 啃咬辦公家具！",
+                    title: "【把總裁辦公室柚木桌椅全部啃成木屑・營養滿分】",
+                    desc: "因為太餓找不到東西吃，你把價值百萬的紅木辦公桌當成甘蔗啃掉一半，秘書進來看到當場石化。"
+                }
+            ],
+            HUNGER_LOW: [
+                {
+                    id: "HUNGER_LOW_1",
+                    emoji: "🎈",
+                    trigger: "飢餓值過低 (<15 撐到爆炸) — 圓滾滾氣球危機！",
+                    title: "【吃太飽變成巨型潮流氣球・飄上紐約時代廣場】",
+                    desc: "你飽到產生反重力效應，整個人像巨型氣球一樣慢慢飄上天空！全球媒體直播你飄越太平洋，再度開創人類史上最荒謬的潮流！"
+                },
+                {
+                    id: "HUNGER_LOW_2",
+                    emoji: "🐻",
+                    trigger: "飢餓值過低 (<15 撐到爆炸) — 意外變身極品壯熊！",
+                    title: "【吃太撐變成圓肚大叔體型・托比瘋狂愛上你求婚】",
+                    desc: "因為連續狂吃大餐，你撐出一個圓滾滾的富貴大肚腩！喜熊控托比看到直接原地發情，捧著炸雞花束殺來嘉義向你求婚！"
+                },
+                {
+                    id: "HUNGER_LOW_3",
+                    emoji: "🛋️",
+                    trigger: "飢餓值過低 (<15 撐到爆炸) — 動彈不得癱瘓！",
+                    title: "【飽到卡在沙發縫隙・動用吊車才把大哥救出來】",
+                    desc: "吃得太誇張導致身體直徑膨脹三倍，整個人死死卡在總裁客廳的豪華沙發裡，最後不得不出動工程吊車才脫困！"
+                },
+                {
+                    id: "HUNGER_LOW_4",
+                    emoji: "💤",
+                    trigger: "飢餓值過低 (<15 撐到爆炸) — 幸福冬眠模式！",
+                    title: "【原地昏睡三天三夜・打呼聲大到被當成地震】",
+                    desc: "美食吃太多直接進入極度飽足昏迷狀態，躺在地上打呼震動波連嘉義地政事務所的地震儀都測得到！"
+                }
+            ]
+        };
+
+        const endingDecks = {
+            MOOD_HIGH: new UniqueDeck(EXTREME_ENDINGS_POOL.MOOD_HIGH),
+            MOOD_LOW: new UniqueDeck(EXTREME_ENDINGS_POOL.MOOD_LOW),
+            ANGER_HIGH: new UniqueDeck(EXTREME_ENDINGS_POOL.ANGER_HIGH),
+            ANGER_LOW: new UniqueDeck(EXTREME_ENDINGS_POOL.ANGER_LOW),
+            HUNGER_HIGH: new UniqueDeck(EXTREME_ENDINGS_POOL.HUNGER_HIGH),
+            HUNGER_LOW: new UniqueDeck(EXTREME_ENDINGS_POOL.HUNGER_LOW)
+        };
+
+        const TOTAL_ENDINGS_COUNT = Object.values(EXTREME_ENDINGS_POOL).reduce((acc, arr) => acc + arr.length, 0);
+        const daysOfWeek = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
+
+        function formatTime(h) {
+            return `${String(h).padStart(2, '0')}:00`;
+        }
+
+        function addLogEntry(title, content, badgeText, badgeColor = "pink") {
+            const logContainer = document.getElementById('action-log');
+            const entry = document.createElement('div');
+            entry.className = "p-3.5 rounded-xl bg-slate-950/90 border border-slate-800/90 animate-pop shadow-md";
+            
+            const colorMap = {
+                pink: "bg-pink-500/20 text-pink-300 border-pink-500/30",
+                cyan: "bg-cyan-500/20 text-cyan-300 border-cyan-500/30",
+                amber: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+                emerald: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+                purple: "bg-purple-500/20 text-purple-300 border-purple-500/30"
+            };
+
+            entry.innerHTML = `
+                <div class="flex justify-between items-center mb-1.5">
+                    <span class="text-xs font-mono text-slate-400">
+                        <i class="fa-regular fa-calendar-check mr-1 text-cyan-400"></i>第 ${state.day} 天 · ${formatTime(state.hour)}
+                    </span>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${colorMap[badgeColor] || colorMap.pink}">
+                        ${badgeText}
+                    </span>
+                </div>
+                <div class="text-xs sm:text-sm text-slate-200 leading-relaxed">${content}</div>
+            `;
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        function addLineMessage(sender, text, note = "", showPopup = true) {
+            const chatContainer = document.getElementById('line-chat');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = "animate-pop";
+
+            if (sender === 'ruilong') {
+                msgDiv.innerHTML = `
+                    <div class="flex flex-col items-end">
+                        <div class="text-[10px] text-slate-800 font-bold mb-0.5 mr-1">瑞龍大哥 (${formatTime(state.hour)})</div>
+                        <div class="max-w-[82%] bg-[#85e249] text-slate-950 p-2.5 rounded-2xl rounded-tr-none text-xs font-medium shadow">
+                            ${text}
+                        </div>
+                    </div>
+                `;
+            } else {
+                const isMaster = sender === 'master';
+                const avatar = isMaster ? "🐵" : "🐻";
+                const name = isMaster ? "主人 (蒙奇奇狂魔)" : "托比 (喜熊吃貨)";
+                const badge = isMaster 
+                    ? `<span class="text-[9px] bg-red-600 text-white px-1 rounded ml-1">爆躁帥哥</span>` 
+                    : `<span class="text-[9px] bg-pink-600 text-white px-1 rounded ml-1">怕蟲吃貨</span>`;
+
+                msgDiv.innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="w-8 h-8 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-base shrink-0 shadow">
+                            ${avatar}
+                        </div>
+                        <div class="flex flex-col items-start max-w-[84%]">
+                            <div class="text-[11px] font-bold text-slate-900 mb-0.5 flex items-center">
+                                ${name} ${badge} <span class="text-[9px] text-slate-700 ml-1.5 font-mono">${formatTime(state.hour)}</span>
+                            </div>
+                            <div class="bg-white text-slate-900 p-2.5 rounded-2xl rounded-tl-none text-xs leading-relaxed shadow">
+                                ${text}
+                                ${note ? `<div class="text-[10px] text-slate-500 mt-1 italic">${note}</div>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                state.unreadCount += 1;
+                updateUnreadBadge();
+
+                if (showPopup) {
+                    showLineNotificationToast(sender, text);
+                }
+            }
+
+            chatContainer.appendChild(msgDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function updateUnreadBadge() {
+            const badge = document.getElementById('unread-badge');
+            const pingDot = document.getElementById('line-ping-dot');
+            if (!badge) return;
+            if (state.unreadCount > 0) {
+                badge.textContent = `未讀 ${state.unreadCount} 則`;
+                badge.classList.remove('hidden');
+            } else {
+                badge.textContent = `已讀`;
+                badge.classList.add('hidden');
+                if (pingDot) pingDot.classList.add('hidden');
+            }
+        }
+
+        function updateStatusUI() {
+            const dow = daysOfWeek[state.day % 7];
+            document.getElementById('day-display').textContent = `第 ${state.day} 天 · ${dow}`;
+            document.getElementById('time-display').textContent = formatTime(state.hour);
+            document.getElementById('subs-display').textContent = `${state.subs.toFixed(2)} 億`;
+            document.getElementById('rev-display').textContent = `${state.revenue.toLocaleString()} 億`;
+            document.getElementById('toys-display').textContent = `${state.toys.toLocaleString()} 件`;
+            document.getElementById('ignore-streak').textContent = `已連續不讀不回 ${state.ignoreHours} 小時`;
+            const headerProg = document.getElementById('header-progress');
+            if (headerProg) {
+                headerProg.textContent = `(${state.unlockedEndings.size}/${TOTAL_ENDINGS_COUNT})`;
+            }
+
+            const m = Math.max(0, Math.min(100, state.mood));
+            const a = Math.max(0, Math.min(100, state.anger));
+            const h = Math.max(0, Math.min(100, state.hunger));
+
+            document.getElementById('mood-bar').style.width = `${m}%`;
+            document.getElementById('anger-bar').style.width = `${a}%`;
+            document.getElementById('hunger-bar').style.width = `${h}%`;
+
+            document.getElementById('mood-text').textContent = `${state.mood} / 100`;
+            document.getElementById('anger-text').textContent = `${state.anger} / 100`;
+            document.getElementById('hunger-text').textContent = `${state.hunger} / 100`;
+
+            const moodWarn = document.getElementById('mood-warning');
+            if (state.mood > 75) {
+                moodWarn.innerHTML = `<span class="text-pink-400 font-bold">⚠️ 心情偏高，注意極樂失控</span>`;
+            } else if (state.mood < 25) {
+                moodWarn.innerHTML = `<span class="text-cyan-400 font-bold">⚠️ 心情偏低，注意 Emo 風暴</span>`;
+            } else {
+                moodWarn.textContent = "狀態：帥氣又迷人，隨時準備享受人生";
+            }
+
+            const angerWarn = document.getElementById('anger-warning');
+            if (state.anger > 75) {
+                angerWarn.innerHTML = `<span class="text-red-400 font-bold">⚠️ 怒氣偏高，注意爆走報復</span>`;
+            } else if (state.anger < 25) {
+                angerWarn.innerHTML = `<span class="text-amber-300 font-bold">⚠️ 怒氣偏低，注意成佛昇華</span>`;
+            } else {
+                angerWarn.textContent = "狀態：看到主人跟托比的訊息就有點煩";
+            }
+
+            const hungerWarn = document.getElementById('hunger-warning');
+            if (state.hunger > 75) {
+                hungerWarn.innerHTML = `<span class="text-orange-400 font-bold">⚠️ 飢餓偏高，注意暴食失控</span>`;
+            } else if (state.hunger < 25) {
+                hungerWarn.innerHTML = `<span class="text-emerald-300 font-bold">⚠️ 飽度偏高，注意撐爆變形</span>`;
+            } else {
+                hungerWarn.textContent = "狀態：肚子微餓，想吃嘉義火雞肉飯";
+            }
+        }
+
+        function advanceTwoHours() {
+            state.hour += 2;
+            if (state.hour >= 24) {
+                state.hour -= 24;
+                state.day += 1;
+            }
+            state.ignoreHours += 2;
+
+            if (Math.random() < 0.45) {
+                document.getElementById('outfit-badge').textContent = outfitsDeck.draw();
+            }
+            
+            if (Math.random() < 0.5) {
+                document.getElementById('jelly-status').textContent = jellyActionsDeck.draw();
+            } else {
+                document.getElementById('jelly-status').textContent = wackyThoughtsDeck.draw();
+            }
+
+            triggerLineHarassment();
+        }
+
+        function triggerLineHarassment() {
+            const roll = Math.random();
+            if (roll < 0.38) {
+                const msg = masterMessagesDeck.draw();
+                addLineMessage('master', msg.text, msg.note, true);
+            } else if (roll < 0.76) {
+                const msg = tobyMessagesDeck.draw();
+                addLineMessage('toby', msg.text, msg.note, true);
+            } else {
+                const combo = comboBanterDeck.draw();
+                combo.forEach((m, idx) => {
+                    setTimeout(() => {
+                        addLineMessage(m.sender, m.text, "", true);
+                    }, idx * 450);
+                });
+            }
+
+            state.anger = Math.min(100, state.anger + 1);
+        }
+
+        function takeAction(type) {
+            advanceTwoHours();
+
+            let text = "";
+            let badge = "";
+            let color = "pink";
+
+            // Max stat change is 5 per action
+            switch (type) {
+                case 'empire':
+                    text = actionNarratives.empire.draw();
+                    state.mood = Math.min(100, state.mood + 3);
+                    state.anger = Math.min(100, state.anger + 2);
+                    state.hunger = Math.min(100, state.hunger + 3);
+                    state.subs += +(Math.random() * 0.02 + 0.01).toFixed(2);
+                    state.revenue += Math.floor(Math.random() * 80 + 20);
+                    badge = "🎬 跨國帝國・Mood+3 Hunger+3";
+                    color = "pink";
+                    break;
+
+                case 'romance':
+                    text = actionNarratives.romance.draw();
+                    state.mood = Math.min(100, state.mood + 4);
+                    state.anger = Math.max(0, state.anger - 2);
+                    state.hunger = Math.min(100, state.hunger + 4);
+                    badge = "💋 混亂私生活・Mood+4 Hunger+4";
+                    color = "pink";
+                    break;
+
+                case 'toys':
+                    text = actionNarratives.toys.draw();
+                    state.mood = Math.min(100, state.mood + 3);
+                    state.anger = Math.max(0, state.anger - 3);
+                    state.hunger = Math.min(100, state.hunger + 1);
+                    state.toys += Math.floor(Math.random() * 8 + 2);
+                    badge = "🤖 美式復古玩具・Anger-3 Mood+3";
+                    color = "purple";
+                    break;
+
+                case 'family':
+                    text = actionNarratives.family.draw();
+                    state.mood = Math.min(100, state.mood + 3);
+                    state.anger = Math.max(0, state.anger - 3);
+                    state.hunger = Math.min(100, state.hunger + 2);
+                    badge = "🐶 陪果凍＆家人・Anger-3 Mood+3";
+                    color = "amber";
+                    break;
+
+                case 'eat':
+                    text = actionNarratives.eat.draw();
+                    state.mood = Math.min(100, state.mood + 3);
+                    state.anger = Math.max(0, state.anger - 2);
+                    state.hunger = Math.max(0, state.hunger - 4);
+                    badge = "🍚 嘉義美食饗宴・Hunger-4 Mood+3";
+                    color = "emerald";
+                    break;
+
+                case 'sing':
+                    text = actionNarratives.sing.draw();
+                    state.mood = Math.min(100, state.mood + 3);
+                    state.anger = Math.max(0, state.anger - 3);
+                    state.hunger = Math.min(100, state.hunger + 2);
+                    state.subs += 0.01;
+                    badge = "🎤 神曲錄製・Anger-3 Hunger+2";
+                    color = "cyan";
+                    break;
+
+                case 'grind':
+                    text = actionNarratives.grind.draw();
+                    state.mood = Math.max(0, state.mood - 2);
+                    state.anger = Math.min(100, state.anger + 3);
+                    state.hunger = Math.min(100, state.hunger + 1);
+                    state.revenue += 60;
+                    badge = "📉 嚴肅財報降溫・Mood-2 Anger+3";
+                    color = "cyan";
+                    break;
+
+                case 'fasting':
+                    text = actionNarratives.fasting.draw();
+                    state.mood = Math.max(0, state.mood - 1);
+                    state.anger = Math.max(0, state.anger - 2);
+                    state.hunger = Math.max(0, state.hunger - 3);
+                    badge = "🧘‍♂️ 走秀燃脂消化・Hunger-3 Anger-2";
+                    color = "purple";
+                    break;
+            }
+
+            addLogEntry("", text, badge, color);
+            updateStatusUI();
+            checkExtremeConsequences();
+        }
+
+        const lineReplies = {
+            ignore: new UniqueDeck([
+                "（大哥瞄了一眼手機通知，直接把手機反蓋在價值百萬的古董桌上，繼續享受完美人生）",
+                "（大哥連點開都懶得點，轉頭親了一下可愛的果凍，覺得耳根子清靜多了）",
+                "（大哥看著跳出來的 99+ 訊息冷笑一聲，開啟勿擾模式繼續挑美式玩具）"
+            ]),
+            sticker: new UniqueDeck([
+                "【貼圖】傳了一張「瑞龍大哥黃金印章蓋你臉上：朕知道了」的動態貼圖。",
+                "【貼圖】傳了一張「果凍翻白眼搖屁股」的超敷衍貼圖。",
+                "【貼圖】傳了一張「美式復古小丑微笑比中指」貼圖。"
+            ]),
+            roast: new UniqueDeck([
+                "🔊 語音訊息 (0:15)：「你們兩個是吃飽太閒是不是？主人你抱著你的蒙奇奇去睡覺，托比你再傳蟲的照片我就寄一箱活體蟑螂去你家！閉嘴！」",
+                "🔊 語音訊息 (0:12)：「少在那邊吵我！林北正在忙幾千億的生意跟約會，再吵把你們兩個綁在火箭上射去外太空！」",
+                "🔊 語音訊息 (0:18)：「看到你們訊息就煩！一個脾氣差又愛玩洋娃娃、一個看到螞蟻就叫得像殺豬，給我安靜兩小時聽到了沒！」"
+            ]),
+            money: new UniqueDeck([
+                "🧧 LINE Pay 轉帳 NT$ 888,888：「拿去買蒙奇奇新衣服跟十桶炸雞，現在立刻馬上給我閉嘴消失！」",
+                "🧧 LINE Pay 轉帳 NT$ 1,000,000：「封口費！誰在接下來兩小時內再傳一個字，我就扣誰的錢！」"
+            ])
+        };
+
+        function handleLineAction(action) {
+            state.ignoreHours = 0;
+            state.unreadCount = 0;
+            updateUnreadBadge();
+
+            if (action === 'ignore') {
+                state.anger = Math.max(0, state.anger - 2);
+                state.mood = Math.min(100, state.mood + 2);
+                addLogEntry("", lineReplies.ignore.draw(), "🔕 無視騷擾・Anger-2 Mood+2", "cyan");
+            } else if (action === 'sticker') {
+                state.anger = Math.max(0, state.anger - 2);
+                state.mood = Math.max(0, state.mood - 1);
+                addLineMessage('ruilong', lineReplies.sticker.draw());
+                setTimeout(() => {
+                    addLineMessage('master', "靠, 傳這什麼敷衍貼圖？你皮在癢是不是？", "", true);
+                }, 400);
+            } else if (action === 'roast') {
+                state.anger = Math.max(0, state.anger - 3);
+                state.hunger = Math.min(100, state.hunger + 1);
+                addLineMessage('ruilong', lineReplies.roast.draw());
+                setTimeout(() => {
+                    addLineMessage('toby', "嗚嗚嗚瑞龍大哥好兇喔，但是罵人聲音還是好性感，我去吃塊雞排壓壓驚！", "", true);
+                }, 400);
+            } else if (action === 'money') {
+                state.anger = Math.max(0, state.anger - 3);
+                state.mood = Math.min(100, state.mood + 2);
+                addLineMessage('ruilong', lineReplies.money.draw());
+                setTimeout(() => {
+                    addLineMessage('master', "哼，算你識相，我剛才看到一隻絕版海盜蒙奇奇，謝啦！", "", true);
+                }, 350);
+                setTimeout(() => {
+                    addLineMessage('toby', "乾爹萬歲！！我馬上叫外送十份和牛便當配珍奶！！🐻💖", "", true);
+                }, 750);
+            }
+            updateStatusUI();
+            checkExtremeConsequences();
+        }
+
+        function checkExtremeConsequences() {
+            let triggered = null;
+
+            if (state.mood > 85) triggered = endingDecks.MOOD_HIGH.draw();
+            else if (state.mood < 15) triggered = endingDecks.MOOD_LOW.draw();
+            else if (state.anger > 85) triggered = endingDecks.ANGER_HIGH.draw();
+            else if (state.anger < 15) triggered = endingDecks.ANGER_LOW.draw();
+            else if (state.hunger > 85) triggered = endingDecks.HUNGER_HIGH.draw();
+            else if (state.hunger < 15) triggered = endingDecks.HUNGER_LOW.draw();
+
+            if (triggered) {
+                state.unlockedEndings.add(triggered.id);
+                updateStatusUI();
+                document.getElementById('ending-emoji').textContent = triggered.emoji;
+                document.getElementById('ending-trigger').textContent = triggered.trigger;
+                document.getElementById('ending-title').textContent = triggered.title;
+                document.getElementById('ending-desc').textContent = triggered.desc;
+                document.getElementById('ending-time').textContent = `第 ${state.day} 天 ${formatTime(state.hour)}`;
+                document.getElementById('ending-subs').textContent = `${state.subs.toFixed(2)} 億`;
+                document.getElementById('ending-progress').textContent = `${state.unlockedEndings.size} / ${TOTAL_ENDINGS_COUNT}`;
+                document.getElementById('ending-modal').classList.remove('hidden');
+            }
+        }
+
+        function recoverFromCrisis() {
+            state.mood = 50;
+            state.anger = 50;
+            state.hunger = 50;
+            document.getElementById('ending-modal').classList.add('hidden');
+            addLogEntry(
+                "",
+                "💫 【千億鈔能力發動】瑞龍大哥動用了跨國公關團隊與私人醫療專機，瞬間將失控的局面平息，三圍狀態重新回到完美的平衡點（50/50/50）！",
+                "✨ 鈔能力重置",
+                "amber"
+            );
+            updateStatusUI();
+        }
+
+        function restartGame() {
+            state.day = 1;
+            state.hour = 8;
+            state.mood = 60;
+            state.anger = 35;
+            state.hunger = 40;
+            state.subs = 1.08;
+            state.revenue = 4280;
+            state.toys = 8842;
+            state.ignoreHours = 0;
+            state.unreadCount = 0;
+
+            document.getElementById('ending-modal').classList.add('hidden');
+            document.getElementById('action-log').innerHTML = "";
+            document.getElementById('line-chat').innerHTML = "";
+            document.getElementById('line-toast-container').innerHTML = "";
+            initGame();
+        }
+
+        function openCollectionModal() {
+            const list = document.getElementById('collection-list');
+            list.innerHTML = "";
+
+            const categoryMeta = [
+                { key: "MOOD_HIGH", label: "💖 心情過高 (>85) 的極樂失控後果", color: "text-pink-400" },
+                { key: "MOOD_LOW", label: "🌧️ 心情過低 (<15) 的世紀 Emo 後果", color: "text-cyan-400" },
+                { key: "ANGER_HIGH", label: "🌋 怒氣過高 (>85) 的總裁爆走後果", color: "text-red-400" },
+                { key: "ANGER_LOW", label: "🪷 怒氣過低 (<15) 的成佛昇華後果", color: "text-amber-300" },
+                { key: "HUNGER_HIGH", label: "🦖 飢餓過高 (>85) 的飢不擇食後果", color: "text-orange-400" },
+                { key: "HUNGER_LOW", label: "🎈 飢餓過低 (<15) 的撐爆變形後果", color: "text-emerald-400" }
+            ];
+
+            categoryMeta.forEach(cat => {
+                const endings = EXTREME_ENDINGS_POOL[cat.key];
+                const unlockedInCat = endings.filter(e => state.unlockedEndings.has(e.id)).length;
+
+                const header = document.createElement('div');
+                header.className = `text-xs font-black uppercase tracking-wider mt-3 mb-1.5 flex justify-between items-center ${cat.color}`;
+                header.innerHTML = `<span>${cat.label}</span><span class="font-mono text-[11px]">${unlockedInCat} / ${endings.length}</span>`;
+                list.appendChild(header);
+
+                endings.forEach(end => {
+                    const unlocked = state.unlockedEndings.has(end.id);
+                    const item = document.createElement('div');
+                    item.className = `p-3 rounded-2xl border mb-2 ${unlocked ? 'bg-slate-950 border-pink-500/40' : 'bg-slate-950/40 border-slate-800 opacity-60'}`;
+                    item.innerHTML = `
+                        <div class="flex items-start gap-3">
+                            <div class="text-2xl mt-0.5">${unlocked ? end.emoji : '🔒'}</div>
+                            <div>
+                                <div class="text-[11px] font-bold ${unlocked ? 'text-pink-400' : 'text-slate-500'}">${end.trigger}</div>
+                                <div class="text-sm font-black text-white mt-0.5">${unlocked ? end.title : '？？？尚未解鎖此荒謬結局'}</div>
+                                <p class="text-xs text-slate-400 mt-1 leading-relaxed">${unlocked ? end.desc : '提示：讓對應的狀態值超過 85 或低於 15 即可觸發！'}</p>
+                            </div>
+                        </div>
+                    `;
+                    list.appendChild(item);
+                });
+            });
+
+            document.getElementById('collection-modal').classList.remove('hidden');
+        }
+
+        function closeCollectionModal() {
+            document.getElementById('collection-modal').classList.add('hidden');
+        }
+
+        function initGame() {
+            addLogEntry(
+                "",
+                "🌅 早安嘉義！瑞龍大哥從佔地千坪的頂級豪宅醒來。可愛的狗狗「果凍」正在床邊搖尾巴，樓下展示櫃裡放著上萬件絕版美國復古玩具，父母跟姐姐貼心地幫你留了早餐。你的 YouTube 頻道剛突破 1.08 億訂閱、跨國印章與娛樂帝國年收破四千億，昨晚約會的酷哥酷姊剛心滿意足地離開。唯一美中不足的是——手機裡的 LINE 又開始狂跳「主人」跟「托比」的騷擾訊息了！",
+                "👑 傳奇的一天開始",
+                "amber"
+            );
+            addLineMessage('master', "喂陳瑞龍，早上八點了你還在睡喔？我剛幫我的蒙奇奇換好早晨運動服了，快點起來回訊息，不然我直接去嘉義踹你家大門！", "（附上一張超帥但臉很臭的晨間自拍）", true);
+            setTimeout(() => {
+                addLineMessage('toby', "早安瑞龍大哥～我剛剛做夢夢到被一隻巨型獨角仙追殺，嚇醒之後趕快吃了三個總匯三明治壓壓驚！你今天有沒有認識新的大肚腩帥熊哥可以介紹給我呀？🐻🍔", "", true);
+            }, 500);
+            updateStatusUI();
+        }
+
+        window.onload = initGame;
+    </script>
+</body>
+</html>
